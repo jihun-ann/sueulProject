@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/basic}">
+
+        <!--웹페이지 컨텐츠영역-->
+        <div id="content-wrapper" layout:fragment="content">
+            <div id="koreaMap-wrapper">
+                <div id="koreaMap">
+                    <span type="button" class="koreaMapArea seoul font" value="seoul" name="서울">서울</span>
+                    <span type="button" class="koreaMapArea incheon font" value="incheon" name="인천">인천</span>
+                    <span type="button" class="koreaMapArea gyeonggi font" value="gyeonggi" name="경기">경기</span>
+                    <span type="button" class="koreaMapArea gangwon font" value="gangwon" name="강원">강원</span>
+                    <span type="button" class="koreaMapArea chungbuk font" value="chungbuk" name="충북">충북</span>
+                    <span type="button" class="koreaMapArea chungnam font" value="chungnam" name="충남">충남</span>
+                    <span type="button" class="koreaMapArea jeonbuk font" value="jeonbuk" name="전북">전북</span>
+                    <span type="button" class="koreaMapArea jeonnam font" value="jeonnam" name="전남">전남</span>
+                    <span type="button" class="koreaMapArea kyungbuk font" value="kyungbuk" name="경북">경북</span>
+                    <span type="button" class="koreaMapArea kyungnam font" value="kyungnam" name="경남">경남</span>
+                    <span type="button" class="koreaMapArea busan font" value="busan" name="부산">부산</span>
+                    <span type="button" class="koreaMapArea jeju font" value="jeju" name="제주">제주</span>
+                </div>
+            </div>
+            <div id="itemImgs-wrapper">
+                <div id="itemImgsList-wrapper">
+                    <div th:each="todaysAlcohol : ${todaysAlcohol}"class="slide-img">
+                        <img src="#">
+                        <span></span>
+                    </div>
+                </div>
+                <span class="listDetail font">자세히 보기</span>
+                <span class="material-symbols-outlined font fa-hexagon">hexagon</span>
+
+            </div>
+        </div>
+    </div>
+
+    <script layout:fragment="script">
+        const bigImgWrapper = document.querySelector('#itemImgs-wrapper')
+        const bigListWrapper = document.querySelector('#itemImgsList-wrapper')
+        let bigImgCurrentIdx = 0;
+
+        bigImgWrapper.onmousedown = (e) =>{
+            const bigItem = document.querySelectorAll('.slide-img');
+            const bigItemCount = bigItem.length;
+
+            let bigImgStartX = 0;
+            let bigImgMoveX = 0;
+
+
+
+            const rect = bigImgWrapper.getBoundingClientRect();
+            //console.log(rect.x) //itemsimgs-wrapper의 위치값
+            //console.log(e.clientX) //현재 창에서의 내가 마우스클릭시에 위치값
+            bigImgStartX = e.clientX - rect.left; //itemsimgs-wrapper내의 내가 누르는 가로 위치값
+            //console.log(bigImgStartX)
+            bigImgWrapper.addEventListener("mousemove",onMouseMove);
+
+            document.onmouseup =(e) => {
+                bigImgWrapper.removeEventListener('mousemove',onMouseMove);
+                document.onmouseup = null;
+                let left2 = window.getComputedStyle(bigListWrapper).getPropertyValue('left');
+                if(bigImgMoveX > -70 && bigImgMoveX < 70){
+                    bigListWrapper.style.left = (bigImgCurrentIdx*-320) + 'px';
+                }
+                if(bigImgMoveX < 0 && bigImgCurrentIdx < bigItemCount-1){
+                    bigImgCurrentIdx++;
+                    bigListWrapper.style.left = (bigImgCurrentIdx*-320) + 'px';
+                }else{
+                    bigListWrapper.style.left = (bigImgCurrentIdx*-320) + 'px';
+                }
+                if(bigImgMoveX > 0 && bigImgCurrentIdx > 0){
+                    bigImgCurrentIdx--;
+                    bigListWrapper.style.left = (bigImgCurrentIdx*-320) + 'px';
+                }else{
+                    bigListWrapper.style.left = (bigImgCurrentIdx*-320) + 'px';
+                }
+            }
+
+
+            function onMouseMove(e) {
+                const rect = bigImgWrapper.getBoundingClientRect();
+                bigImgMoveX = e.clientX - rect.left - bigImgStartX;
+                //console.log(bigImgMoveX); //마우스의 움직임을 알기위하여 맨처음 찍은 마우스의 위치값인 startX를 뺌
+                if(bigImgCurrentIdx == 0 && bigImgMoveX>0){
+                    return
+                }
+                else if(bigImgCurrentIdx == bigItemCount-1 && bigImgMoveX<0){
+                    return
+                }
+                let left = window.getComputedStyle(bigListWrapper).getPropertyValue('left');
+                left = left.replace('px','');
+                let result = Number(left)+bigImgMoveX;
+                //console.log(left)
+                //console.log(bigImgMoveX)
+                //console.log(result)
+                bigListWrapper.style.left = result + 'px';
+            }
+        }
+
+        //이 코드는 이미지 슬라이드를 드래그하여 전환하는 기능을 구현한 코드입니다.
+        // bigImgWrapper는 드래그 이벤트가 발생할 영역을 가리키는 변수이고,
+        // bigListWrapper는 슬라이드 이미지들을 감싸고 있는 div 엘리먼트입니다.
+        // bigImgWrapper.onmousedown 이벤트 핸들러에서는 마우스 클릭 시 발생하는 이벤트를 다루며,
+        // bigImgWrapper.addEventListener("mousemove",onMouseMove)로 드래그 이벤트를 등록합니다.
+        // onMouseMove 함수에서는 마우스가 움직이는 동안 발생하는 이벤트를 처리합니다. 마우스 업 이벤트가 발생하면,
+        // document.onmouseup 이벤트 핸들러에서 드래그 이벤트를 해제하고 슬라이드 이미지의 위치를 조정합니다.
+        // 이 코드에서는 bigImgCurrentIdx 변수를 이용해 현재 보여지는 슬라이드 이미지의 인덱스를 저장하고,
+        // bigItemCount 변수를 이용해 전체 슬라이드 이미지의 개수를 저장합니다. 이를 활용하여 슬라이드 이미지를 좌우로 전환합니다.
+
+
+
+
+
+
+
+    </script>
+</html>

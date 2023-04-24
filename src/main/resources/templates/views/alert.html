@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<script th:inline="javascript" layout:fragment="script">
+  let aa = [[${alert}]]
+  let url = [[${url}]]
+  alert(aa);
+  location.href=url;
+
+</script>

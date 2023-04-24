@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/layout/basic}">
+
+<th:block layout:fragment="css">
+  <style>
+      @import url("/CSS/memberEdit.css");
+  </style>
+</th:block>
+
+<div layout:fragment="content">
+  <div id="profile-wrapper">
+    <div class="profileList" th:object="${member}">
+      <div class="myprofile">
+        <span>내 프로필</span>
+      </div>
+      <div id="memberIdwrap" class="edit-wrap">
+        <span class="material-symbols-outlined symbols" th:if="${member.route}=='sueul'">badge</span>
+        <div class="naversymbol" th:if="${member.route}=='naver'"></div>
+        <span class="memberImfo" th:text="${member.memberId}"></span>
+      </div>
+      <hr/>
+      <div id="memberPwwrap" class="edit-wrap">
+        <span class="material-symbols-outlined symbols">password</span><span class="memberImfo"
+                                                                             th:text="비밀번호"></span>
+        <button class="editBtn"><span>수 정</span></button>
+      </div>
+      <hr/>
+      <div id="memberNnwrap" class="edit-wrap">
+        <span class="material-symbols-outlined symbols">mindfulness</span><span class="memberImfo"
+                                                                                th:text="${member.nickname}"></span>
+        <button class="editBtn"><span>수 정</span></button>
+      </div>
+      <hr/>
+      <div id="memberNamewrap" class="edit-wrap">
+        <span class="material-symbols-outlined symbols">person</span><span class="memberImfo"
+                                                                           th:text="${member.memberName}"></span>
+        <button class="editBtn"><span>수 정</span></button>
+      </div>
+      <hr/>
+      <div id="memberPnwrap" class="edit-wrap">
+        <span class="material-symbols-outlined symbols">phone_iphone</span><span class="memberImfo"
+                                                                                 th:text="${member.memberPhoneNum}"></span>
+        <button class="editBtn"><span>수 정</span></button>
+      </div>
+      <br/>
+    </div>
+  </div>
+
+  <!--modal영역-->
+  <div class="edit-modal-wrapper">
+    <div class="memberPwEditWrap modalIn modalIn-wrap">
+      <span class="modalIn">현재 비밀번호</span><input class="currentPw modalIn" type="password"/>
+      <hr/>
+      <span class="modalIn">새로운 비밀번호</span><input class="newPw modalIn" type="password"/>
+      <hr/>
+      <span class="modalIn">비밀번호 확인</span><input class="newPw2 modalIn" type="password"/>
+      <hr/>
+      <button class="memberPwEditBtn modalIn">수 정</button>
+    </div>
+
+    <div class="memberNnEditWrap modalIn modalIn-wrap">
+      <span class="modalIn">새로운 별칭</span><input class="newNn modalIn" type="text"/>
+      <hr/>
+      <button value="수 정" class="memberNnEditBtn modalIn">수 정</button>
+    </div>
+
+    <div class="memberNameEditWrap modalIn modalIn-wrap" style="width: 420px">
+      <span class="modalIn">이 름</span><input class="memberName modalIn float-right" type="text"/>
+      <hr/>
+      <span class="modalIn">주민등록번호</span>
+      <div class="float-right"><input class="memberSsn1 modalIn" type="number" readonly/><span  class="modalIn">-</span><input class="memberSsn2 modalIn" type="number" maxlength="7" oninput="maxLengthC(this)"/> </div>
+      <hr/>
+      <button class="memberNameEditBtn modalIn">수 정</button>
+    </div>
+
+
+    <div class="memberPnEditWrap modalIn modalIn-wrap" style="width: 420px">
+      <span class="modalIn">핸드폰 번호</span>
+      <div class="float-right">
+        <input class="newPn memberPn1 modalIn" type="number" maxlength="3" oninput="maxLengthC(this)"/>
+        <span  class="modalIn">-</span>
+        <input class="newPn memberPn2 modalIn" type="number" maxlength="4" oninput="maxLengthC(this)"/>
+        <span  class="modalIn">-</span>
+        <input class="newPn memberPn3 modalIn" type="number" maxlength="4" oninput="maxLengthC(this)"/>
+        &nbsp;
+        <button class="modalIn authNumReqBtn">인증번호받기</button>
+      </div>
+      <hr/>
+      <span class="modalIn">인증번호</span>
+      <input type="number" class="modalIn authNum" />
+      <hr/>
+      <button class="memberPnEditBtn modalIn">수 정</button>
+    </div>
+  </div>
+</div>
+
+<script layout:fragment="script">
+	function maxLengthC(object){
+		if(object.value.length > object.maxLength){
+			object.value = object.value.slice(0,object.maxLength);
+		}
+	}
+
+	$('.editBtn').click(function (e) {
+		$('.edit-modal-wrapper').css({'display': "inline"});
+		$('.modalIn input').val("");
+
+
+		if (e.currentTarget.parentElement.id == "memberPwwrap") {
+			$('.memberPwEditWrap').css({'display': "inline"});
+		} else if (e.currentTarget.parentElement.id == "memberNnwrap") {
+			$('.memberNnEditWrap').css({'display': "inline"});
+		}else if (e.currentTarget.parentElement.id == "memberNamewrap") {
+			$('.memberNameEditWrap').css({'display': "inline"});
+			$('.memberSsn1').val('[[${#strings.substring(member.memberSsn,0,6)}]]');
+		}else if (e.currentTarget.parentElement.id == "memberPnwrap") {
+			$('.memberPnEditWrap').css({'display': "inline"});
+		}
+	})
+
+	$('.edit-modal-wrapper').click(function (e) {
+		if (!e.target.classList.contains('modalIn')) {
+			$('.edit-modal-wrapper').css({'display': "none"});
+			$('.modalIn-wrap').css({'display': "none"});
+		}
+	})
+
+  let authNumRes; //인증번호
+	$(document).ready(function () {
+		$('.memberPwEditBtn').click(function () {
+			console.log('dd');
+			if ($('.currentPw').val() == "" || $('.newPw').val() == "" || $('.newPw2').val() == "") {
+				alert('비밀번호를 입력해주세요.');
+			} else {
+				let currentPw = $('.currentPw').val();
+				$.ajax({
+					url     : "/pwChecking",
+					type    : "post",
+					data    : {"memberPw": currentPw},
+					dataType: "JSON",
+					success : function (e) {
+						if (e != true) {
+							alert("현재 비밀번호를 확인해주세요.")
+						} else {
+							let newPw = $('.newPw').val();
+							let newPw2 = $('.newPw2').val();
+
+							if (newPw != newPw2) {
+								alert("새로운 비밀번호가 상이합니다.")
+							} else {
+								const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+])[A-Za-z\d~!@#$%^&*()_+]{6,13}$/;
+								if (regex.test(newPw)) {
+									console.log("dd");
+
+									let form = document.createElement('form');
+									form.setAttribute('method', 'post');
+									form.setAttribute('action', '/memberPwUpdate');
+
+									let pwfield = document.createElement('input');
+									pwfield.setAttribute('type', 'hidden');
+									pwfield.setAttribute('name', 'memberPw');
+									pwfield.setAttribute('value', newPw);
+
+									form.appendChild(pwfield);
+									document.body.appendChild(form);
+									form.submit();
+								} else {
+									alert("비밀번호는 6~13자리의 영문,숫자,특수문자가 포함되어야 합니다.")
+								}
+							}
+						}
+					}
+				})
+			}
+		})
+		$('.memberNnEditBtn').click(function () {
+			let newNn = $('.newNn').val();
+			if (newNn == null) {
+				alert("새로운 별칭을 입력해주세요.")
+			} else {
+				$.ajax({
+					url     : "/nnChecking",
+					type    : "post",
+					data    : {"nickname": newNn},
+					dataType: "JSON",
+					success : function (e) {
+						if (e == false) {
+							alert("사용중인 별칭입니다.")
+						} else {
+							let form = document.createElement('form');
+							form.setAttribute('method', 'post');
+							form.setAttribute('action', '/memberNnUpdate');
+
+							let nnfield = document.createElement('input');
+							nnfield.setAttribute('type', 'hidden');
+							nnfield.setAttribute('name', 'nickname');
+							nnfield.setAttribute('value', newNn);
+
+							form.appendChild(nnfield);
+							document.body.appendChild(form);
+							form.submit();
+						}
+					}
+				})
+			}
+		})
+
+    $('.memberNameEditBtn').click(function(){
+      let memName = $('.memberName').val();
+      let memSsn1 = $('.memberSsn1').val();
+      let memSsn2 = $('.memberSsn2').val();
+      let memSsn = memSsn1 + "-" + memSsn2;
+
+			if(memName==""||memSsn1==""||memSsn2==""){
+				alert('이름과 주민등록번호를 입력해주세요.')
+      }else{
+        let checkSsn = "[[${member.memberSsn}]]";
+				if(memSsn != checkSsn){
+          alert("주민등록번호를 확인해주세요.")
+        }else{
+					let form = document.createElement('form');
+					form.setAttribute('method', 'post');
+					form.setAttribute('action', '/memberNameUpdate');
+
+					let namefield = document.createElement('input');
+					namefield.setAttribute('type', 'hidden');
+					namefield.setAttribute('name', 'memberName');
+					namefield.setAttribute('value', memName);
+
+					form.appendChild(namefield);
+					document.body.appendChild(form);
+					form.submit();
+        }
+      }
+    })
+
+    $('.authNumReqBtn').click(function (){
+		let memberPnContain;
+      let newPn1 = $('.memberPn1').val();
+      let newPn2 = $('.memberPn2').val();
+      let newPn3 = $('.memberPn3').val();
+
+			if(newPn1 == ""||newPn2 == ""||newPn3 == ""){
+				alert("핸드폰 번호를 입력해주세요.")
+      }else{
+				let memberPn = newPn1+newPn2+newPn3;
+				memberPnContain = newPn1+"-"+newPn2+"-"+newPn3;
+				$.ajax({
+					url: "/phoneNumContain",
+					type: "post",
+					dataType : "JSON",
+					data: {"memberPn":memberPnContain},
+					success: function (e){
+						if (e == true) {
+							$.ajax({
+								url     : "/smsAuthentication",
+								type    : "post",
+								dataType: "JSON",
+								data    : {"memberPn": memberPn},
+								success : function (e) {
+									authNumRes = e;
+									console.log(e);
+								}
+							})
+              $('.newPn').prop('readonly',true);
+							$('.authNumReqBtn').val("재인증받기");
+						} else {
+							alert("이미 가입된 번호입니다.");
+						}
+					}
+				})
+      }
+    })
+    $('.memberPnEditBtn').click(function (e){
+			let newPn1 = $('.memberPn1').val();
+			let newPn2 = $('.memberPn2').val();
+			let newPn3 = $('.memberPn3').val();
+
+			let authNum = $('.authNum').val();
+
+			if(newPn1 == ""||newPn2 == ""||newPn3 == ""){
+				alert("핸드폰 번호를 입력해주세요.")
+			}else if(authNum == ""){
+				alert('인증번호를 입력해주세요.')
+      }else if(authNum != authNumRes){
+				alert('인증번호를 확인해주세요')
+      }else{
+				let form = document.createElement('form');
+				form.setAttribute('method', 'post');
+				form.setAttribute('action', '/memberPnUpdate');
+
+				let pnfield = document.createElement('input');
+				pnfield.setAttribute('type', 'hidden');
+				pnfield.setAttribute('name', 'memberPhoneNum');
+				pnfield.setAttribute('value', memberPnContain);
+
+				form.appendChild(pnfield);
+				document.body.appendChild(form);
+				form.submit();
+      }
+    })
+	})
+</script>
+</html>

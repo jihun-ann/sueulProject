@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Sueul</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <style>
+      @import url("/CSS/basic.css");
+    </style>
+    <th:block layout:fragment="css"></th:block>
+</head>
+<body>
+    <!--웹페이지 전체-->
+    <div id="wrapper">
+        <!--웹페이지 헤더영역-->
+        <div id="header-wrapper">
+            <a href="/" id="header-logo"></a>
+            <div id="itemList-wrapper">
+                <div class="slide-imgC item-category" href="#"><img src="/Detail/1.png"><span>탁주</span></div>
+                <div class="slide-imgC item-category" href="#"><img src="/Detail/2.png"><span>청주</span></div>
+                <div class="slide-imgC item-category" href="#"><img src="/Detail/3.png"><span>약주</span></div>
+                <div class="slide-imgC item-category" href="#"><img src="/Detail/4.png"><span>과실주</span></div>
+                <div class="slide-imgC item-category" href="#"><img src="/Detail/5.png"><span>증류주</span></div>
+            </div>
+        </div>
+        <div id="signIn">
+            <div class="memberNameLabel-wrapper menuSub" th:if="${member}!=null">
+                <span class="memberNameLabel">[[${member.nickname}]]님</span><span class="material-symbols-outlined">arrow_drop_down</span>
+                <div class="menu-wrapper menuSub"  th:if="${member.role}=='member'">
+                  <a class="memberEdit" href="/memberEdit">회원 정보 수정</a>
+                  <a class="likeDetail" href="/likeDetail">관심 상품</a>
+                  <a class="signOut" href="/signOut" >로그 아웃</a>
+                </div>
+                <div class="menu-wrapper menuSub"  th:if="${member.role}=='admin'">
+                  <a class="memberEditAdmin" href="/memberEditAdmin">회원 정보 수정</a>
+                  <a class="detailList" href="/detailList">전체 상품</a>
+                  <a class="detailAdd" href="/detailAdd">상품 추가</a>
+                  <a class="signOut" href="/signOut" >로그 아웃</a>
+                </div>
+            </div>
+            <a class="login" href="/signIn" th:if="${member}==null">로그인</a>
+            <a class="serviceCenter" href="/serviceCenter" >고객센터</a>
+        </div>
+        <!--웹페이지 컨텐츠영역-->
+        <div id="content-wrapper" layout:fragment="content">
+
+        </div>
+
+    </div>
+
+    <script src="/JS/basic.js"></script>
+    <script layout:fragment="script">
+    </script>
+</body>
+</html>

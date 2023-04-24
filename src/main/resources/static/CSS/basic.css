@@ -1,0 +1,250 @@
+@font-face {
+    font-family: 'Shilla_CultureB-Bold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/Shilla_CultureB-Bold.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+}
+.font{
+    font-family: Shilla_CultureB-Bold;
+    text-shadow: -1px 0 #939393, 0 1px #bbb, 1px 0 #bbb, 0 -1px #bbb;
+    color : #8b8b8b;
+    cursor: pointer;
+}
+body{
+    padding: 0;
+    margin: 0;
+}
+#wrapper{
+    width: 1280px;
+    height: auto;
+    margin: 0 auto;
+}
+
+/**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**/
+/*Header영역*/
+#header-wrapper{
+    width: 100%;
+    height: 150px;
+    background: #FFC107;
+    padding: 0 20px;
+    box-sizing: border-box;
+    display: flex;
+    position: relative;
+}
+#header-logo{
+    width: 200px;
+    height: 120px;
+    margin: 15px;
+    background: url("/logo/sueul_logo.png") no-repeat center;
+    background-size: 100% 60%;
+}
+#itemList-wrapper{
+    width: 1080px;
+    height: 150px;
+    display: flex;
+    justify-content: flex-end;
+}
+.slide-imgC{
+    width : 60px;
+    height: 120px;
+    margin: 15px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+.slide-imgC span{
+    font-family: Shilla_CultureB-Bold;
+    text-shadow: -1px 0 #939393, 0 1px #bbb, 1px 0 #bbb, 0 -1px #bbb;
+    color : #8b8b8b;
+    line-height: 20px;
+    width: 60px;
+    font-size: 20px;
+    text-align: center;
+}
+.slide-imgC img{
+    width: 60px;
+    height: 100px;
+    opacity: 0.5;
+}
+#signIn{
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 20px;
+    display: flex;
+    margin-right: 20px;
+    cursor: pointer;
+    justify-content: flex-end;
+    align-items: baseline;
+}
+.memberNameLabel-wrapper{
+    width: 100px;
+    text-align: center;
+    position: relative;
+}
+.memberNameLabel,.serviceCenter, .memberEdit, .login{
+    font-family: Shilla_CultureB-Bold;
+    color : black;
+    line-height: 30px;
+    font-size: 20px;
+}
+.memberEdit, .likeDetail, .memberEditAdmin,.detailList, .signOut ,.detailAdd{
+    font-family: Shilla_CultureB-Bold;
+    color : black;
+    line-height: 30px;
+    font-size: 15px;
+}
+
+.menu-wrapper{
+    position: absolute;
+    width: 110px;
+    display: none;
+    top: 85%;
+    left: -10px;
+    flex-direction: column;
+    border-radius: 0.6rem;
+    background-color: snow;
+    box-shadow: 0 0.8rem 1.6rem 0 rgba(0,0,0,.16);
+    z-index: 1;
+}
+#signIn a{
+    text-decoration: none;
+    margin: 0 10px;
+}
+/**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**//**/
+/*Content영역*/
+#content-wrapper{
+    background: #f5eadd;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+}
+#koreaMap-wrapper{
+    width: 880px;
+    height: 750px;
+    background: linear-gradient(45deg, white 50px, #f5eadd 0);
+    display: flex;
+    align-items: center;
+}
+#koreaMap{
+    background: url("/mapImage/koreaMap.png") no-repeat center;
+    background-size: 100% ;
+    width: 650px;
+    height: 710px;
+    margin: 0 auto;
+    position: relative;
+}
+#itemImgs-wrapper{
+    width: 400px;
+    height: 750px;
+    background: #faf3ef;
+    border: 1px #faecd0 solid;
+    position: relative;
+    overflow: hidden;
+}
+#itemImgsList-wrapper{
+    position: absolute;
+    top: 130px;
+    left: 0px;
+    height: 450px;
+    display: flex;
+    margin-left: 50px;
+    transition: .5s;
+}
+#itemImgs-wrapper:active{
+    cursor: grabbing;
+}
+.slide-img{
+    width: 300px;
+    height: 450px;
+    margin-right: 20px;
+}
+.slide-img img{
+    width: 100%;
+    height: 100%;
+}
+.slide-img span{
+    width: 300px;
+    height: auto;
+}
+.fa-hexagon{
+    font-family: 'Material Symbols Outlined';
+    left: 50%;
+    top: 30px;
+    position: absolute;
+    font-size: 32px;
+    transform: translateX(-50%);
+    cursor: pointer;
+}
+.listDetail{
+    width : 150px;
+    height: 45px;
+    position: absolute;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    text-align: center;
+    line-height: 45px;
+    font-size: 25px;
+    background: url("/mapImage/listDetailNonSelect.png") no-repeat center;
+    background-size: 100% 85%;
+}
+.koreaMapArea{
+    width: auto;
+    height: 30px;
+    position: absolute;
+    cursor: pointer;
+    font-size: 30px;
+}
+.seoul{
+    left: 212px;
+    top: 143px;
+}
+.incheon{
+    left: 147px;
+    top: 143px;
+}
+.gyeonggi{
+    left: 230px;
+    top: 90px;
+}
+.gangwon{
+    left: 340px;
+    top: 110px;
+}
+.chungbuk{
+    left: 290px;
+    top: 231px;
+}
+.chungnam{
+    left: 195px;
+    top: 265px;
+}
+.jeonbuk{
+    left: 232px;
+    top: 372px;
+}
+.jeonnam{
+    left: 210px;
+    top: 460px;
+}
+.kyungbuk{
+    left: 395px;
+    top: 290px;
+}
+.kyungnam{
+    left: 355px;
+    top: 415px;
+}
+.busan{
+    left: 440px;
+    top: 435px;
+}
+.jeju{
+    left: 115px;
+    top: 645px;
+}

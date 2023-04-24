@@ -1,0 +1,128 @@
+/*회원정보수정 영역*/
+#profile-wrapper{
+    width: 100%;
+    padding-top: 50px;
+}
+.profileList{
+    width: 500px;
+    margin: 0 auto;
+    background-color: snow;
+}
+.myprofile{
+    width: 100%;
+    height: 60px;
+    text-align: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+    background-color: #FFA07A;
+    margin-bottom: 9px;
+}
+.myprofile>span{
+    font-family: Shilla_CultureB-Bold;
+    color : black;
+    line-height: 40px;
+    font-size: 40px;
+}
+.edit-wrap{
+    width: 100%;
+    height: 54px;
+    padding: 17px;
+    box-sizing: border-box;
+    position: relative;
+}
+.memberImfo{
+    font-family: Shilla_CultureB-Bold;
+    color : black;
+    line-height: 20px;
+    font-size: 20px;
+    position: absolute;
+}
+hr{
+    width: 95%;
+}
+.editBtn{
+    float: right;
+    border: 1px solid lightgrey;
+    border-radius: 3px;
+    font-size: 15px;
+    cursor: pointer;
+}
+.symbols{
+    font-size: 20px;
+    line-height: 20px;
+    margin: 0 10px 0 0;
+}
+.naversymbol{
+    width: 20px;
+    height: 20px;
+    background: url("/btn/naversymbol.png") no-repeat center;
+    background-size: 100%;
+    display: inline-block;
+    margin: 0 10px 0 0;
+}
+.edit-modal-wrapper{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+}
+.memberPwEditWrap, .memberNnEditWrap, .memberNameEditWrap, .memberPnEditWrap{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    transform: translate(-50%,-50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+}
+.memberPwEditWrap>span, .memberNnEditWrap>span, .memberNameEditWrap>span,.memberPnEditWrap>span{
+    width: 110px;
+    font-family: Shilla_CultureB-Bold;
+    color : black;
+    line-height: 30px;
+    font-size: 15px;
+}
+.memberPwEditWrap>input[type="password"], .memberNnEditWrap>input{
+    width: 150px;
+    height: 25px;
+    float: right;
+    box-sizing: border-box;
+}
+.authNum{
+    width: 80px;
+    height: 25px;
+    float: right;
+    box-sizing: border-box;
+}
+.memberNameEditWrap input{
+    width: 150px;
+    height: 25px;
+    box-sizing: border-box;
+}
+.newPn{
+    width: 50px;
+    height: 25px;
+    box-sizing: border-box;
+}
+.float-right{
+    float: right;
+}
+.memberPwEditBtn, .memberNnEditBtn, .memberNameEditBtn, .memberPnEditBtn, .authNumReqBtn{
+    cursor: pointer;
+    float: right;
+    border: 1px solid lightgrey;
+    border-radius: 3px;
+    font-size: 15px;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+.memberSsn2{
+    -webkit-text-security: disc;
+}

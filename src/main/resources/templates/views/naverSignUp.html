@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<th:block layout:fragment="css">
+  <style>
+      @import url("/CSS/signUp.css");
+  </style>
+</th:block>
+
+<div id="content-wrapper" layout:fragment="content">
+  <div class="signUp-wrapper">
+    <div class="signUpSpan-wrapper">
+      <p id="idCheck">아이디</p>
+      <p id="pwCheck">비밀번호</p>
+      <p id="pwCheck2">비밀번호 확인</p>
+      <p id="nnCheck">별 칭</p>
+      <p id="nameCheck">이 름</p>
+      <p id="ssnCheck">주민등록 번호</p>
+      <p id="pnCheck">휴대폰 번호</p>
+    </div>
+    <form action="/signUp" method="post" class="signUpInput-wrapper" th:object="${navermember}">
+      <input type="hidden" name="route" value="naver" />
+      <input type="text" class="signUp" name="memberId" pattern="[A-za-z]+" th:value="${navermember.memberId}" readonly/>
+      <input type="password" class="signUp" name="memberPw" minlength="6" maxlength="13"/>
+      <input type="password" class="signUp" name="memberPw2" minlength="6" maxlength="13"/>
+      <input type="text" class="signUp" name="nickname" th:value="${navermember.nickname}"/>
+      <input type="text" class="signUp" name="memberName" th:value="${navermember.memberName}"/>
+      <div>
+        <input type="number" class="userSsn signUp" name="userSsn1" maxlength="6" pattern="[0-9]+" oninput="maxLengthC(this)" th:value="${#strings.substring(navermember.memberSsn,0,6)}"/>
+        <span>-</span>
+        <input type="number" class="userSsn signUp" name="userSsn2" maxlength="7" pattern="[0-9]+" oninput="maxLengthC(this)" th:value="${#strings.substring(navermember.memberSsn,7,14)}"/>
+        <input type="hidden" name="memberSsn"/>
+      </div>
+      <div>
+        <input type="number" class="userPhoneNum signUp" name="memberPn" pattern="[0-9]+" maxlength="3" oninput="maxLengthC(this)" th:value="${#strings.substring(navermember.memberPhoneNum,0,3)}"/>
+        <span>-</span>
+        <input type="number" class="userPhoneNum signUp" name="memberPn2" pattern="[0-9]+" maxlength="4" oninput="maxLengthC(this)" th:value="${#strings.substring(navermember.memberPhoneNum,4,8)}"/>
+        <span>-</span>
+        <input type="number" class="userPhoneNum signUp" name="memberPn3" pattern="[0-9]+" maxlength="4" oninput="maxLengthC(this)" th:value="${#strings.substring(navermember.memberPhoneNum,9,13)}"/>
+        <input type="hidden" name="memberPhoneNum" />
+      </div>
+      <br/><br/>
+      <span type="button"  class="font signCheck formSubmit" name="formSubmit">회 원 가 입</span>
+    </form>
+    <div class="signupCheck-wrapper">
+      <span id="ssnChecking" class="font signCheck">본인 인증</span>
+      <span id="pnChecking" class="font signCheck">휴대폰 인증</span>
+    </div>
+    <div>
+      <input type="hidden" id="idC" value="false"/>
+      <input type="hidden" id="pwC" value="false"/>
+      <input type="hidden" id="pwC2" value="false"/>
+      <input type="hidden" id="nnC" value="false"/>
+      <input type="hidden" id="ssnC" value="false"/>
+      <input type="hidden" id="pnC" value="false"/>
+    </div>
+  </div>
+  <div class="modal-wrapper sms-modal-wrap">
+    <div class="modal modalIn">
+      <p class="modalIn">휴대폰 번호</p>
+        <input type="number" class="modal-pnC modalIn" />
+        <input type="button" class="modalIn sendsms" value="인증번호받기"/><br/>
+      <p class="modalIn">인증 번호</p>
+      <input type="number" class="modal-smsC modalIn" />
+      <input type="button" class="modalIn sendsmsC" value="인 증"/>
+    </div>
+  </div>
+  <div class="modal-wrapper alert-modal-wrap">
+    <div class="alert-modal modalIn modal">
+      <span class="modalIn alertText"></span><br/><br/>
+      <button class="confirm">확 인</button>
+    </div>
+  </div>
+</div>
+
+<script src="/JS/basic.js"></script>
+<script layout:fragment="script">
+  function maxLengthC(object){
+		if(object.value.length > object.maxLength){
+			object.value = object.value.slice(0,object.maxLength);
+    }
+  }
+
+	let smsRandomnum=0;
+
+	$(document).ready(function () {
+
+		let memberId = $('input[name="memberId"]').val();
+		let nickname = $('input[name="nickname"]').val();
+
+		$.ajax({
+			url     : "/idChecking",
+			type    : "post",
+			dataType: "JSON",
+			data    : {"memberId": memberId},
+			success : function (e) {
+
+				if (e == true) {
+					$('#idCheck').text("사용가능한 아이디입니다");
+					$('#idCheck').css({'font-size': '18px'});
+					$('#idC').val('true');
+				} else {
+					alert("사용중인 아이디입니다. 관리자에게 문의하세요");
+					location.href = "/";
+				}
+			}, error: function (e) {
+				console.log(e);
+			}
+		})
+
+		$.ajax({
+			url     : "/nnChecking",
+			type    : "post",
+			dataType: "JSON",
+			data    : {"nickname": nickname},
+			success : function (e) {
+
+				if (e == true) {
+					$('#nnCheck').text("사용가능한 별칭입니다");
+					$('#nnCheck').css({'font-size': '18px'});
+					$('#nnC').val('true');
+				} else {
+					$('#nnCheck').text("중복되는 별칭입니다");
+					$('#nnCheck').css({'font-size': '18px'});
+					$('#nnC').val('false');
+				}
+			}, error: function (e) {
+				console.log(e);
+			}
+		})
+
+
+		$(document).keyup(function (e) {
+			if(e.target.getAttribute('name') == 'nickname') {
+				let nickname = $('input[name="nickname"]').val();
+				if (nickname == "" || nickname == null) {
+					$('#nnCheck').text("별칭을 입력해주세요");
+					$('#nnCheck').css({'font-size': '18px'});
+					$('#nnC').val('false');
+				} else {
+					$.ajax({
+						url     : "/nnChecking",
+						type    : "post",
+						dataType: "JSON",
+						data    : {"nickname": nickname},
+						success : function (e) {
+
+							if (e == true) {
+								$('#nnCheck').text("사용가능한 별칭입니다");
+								$('#nnCheck').css({'font-size': '18px'});
+								$('#nnC').val('true');
+							} else {
+								$('#nnCheck').text("중복되는 별칭입니다");
+								$('#nnCheck').css({'font-size': '18px'});
+								$('#nnC').val('false');
+							}
+						}, error: function (e) {
+							console.log(e);
+						}
+					})
+				}
+			} else if (e.target.getAttribute('name') == 'memberPw') {
+				const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_+])[A-Za-z\d~!@#$%^&*()_+]{6,13}$/;
+				let pw = $('input[name=memberPw]').val();
+
+				if (pw == "" || pw == null) {
+					$('#pwCheck').text("비밀번호를 입력해주세요");
+					$('#pwCheck').css({'font-size': '18px'});
+					$('#pwC').val('false');
+				} else {
+					if (regex.test(pw)) {
+						$('#pwCheck').text("사용가능한 비밀번호입니다");
+						$('#pwCheck').css({'font-size': '18px'});
+						$('#pwC').val('true');
+					} else {
+						const regex1 = /[A-Za-z]/;
+						const regex2 = /[\d]/;
+						const regex3 = /[~!@#$%^&*()_+]/;
+						const regex4 = /^.{6,13}$/;
+
+						if (!regex4.test(pw)) {
+							$('#pwCheck').text("최소 6자리에서 최대 13자리로 설정하여야 합니다");
+							$('#pwCheck').css({'font-size': '15px'});
+						} else {
+							if (pw.match(regex1) == null) {
+								$('#pwCheck').text("영문이 포함되어야 합니다");
+								$('#pwCheck').css({'font-size': '18px'});
+							} else if (pw.match(regex2) == null) {
+								$('#pwCheck').text("숫자가 포함되어야 합니다");
+								$('#pwCheck').css({'font-size': '18px'});
+							} else if (pw.match(regex3) == null) {
+								$('#pwCheck').text("특수기호(~!@#$%^&*()_+)가 포함되어야 합니다");
+								$('#pwCheck').css({'font-size': '15px'});
+							}
+						}
+						$('#pwC').val('false');
+					}
+				}
+			} else if (e.target.getAttribute('name') == 'memberPw2') {
+				let pw = $('input[name=memberPw]').val();
+				let pw2 = $('input[name=memberPw2]').val();
+				if(pw == "" || pw == null || pw2 == "" || pw2==null) {
+            $('#pwCheck2').text("비밀번호를 입력해주세요");
+            $('#pwCheck2').css({'font-size': '18px'});
+						$('#pwC2').val('false');
+				}else{
+          if(pw == pw2){
+            $('#pwCheck2').text("비밀번호가 일치합니다");
+            $('#pwCheck2').css({'font-size': '18px'});
+						$('#pwC2').val('true');
+          }else{
+						$('#pwCheck2').text("비밀번호가 일치하지 않습니다");
+						$('#pwCheck2').css({'font-size': '18px'});
+						$('#pwC2').val('false');
+					}
+        }
+			}else if(e.target.classList.contains('userSsn')){
+				let ssn = $('input[name=userSsn1]').val();
+				let ssn2 = $('input[name=userSsn2]').val();
+				if(ssn == ""||ssn==null||ssn2==""||ssn2==null){
+					$('#ssnCheck').text("주민등록번호를 입력해주세요");
+					$('#ssnCheck').css({'font-size': '18px'});
+					$('#ssnC').val('false');
+        }else if($('#ssnC').val() == 'true'){
+					$('#ssnCheck').text("인증되었습니다");
+					$('#ssnC').val('true');
+				}else{
+					if(ssn.length == 6 && ssn2.length==7){
+						$('#ssnCheck').text("주민등록번호를 인증해주세요");
+						$('#ssnCheck').css({'font-size': '18px'});
+          }
+        }
+      }else if(e.target.classList.contains('userPhoneNum')){
+				let pn = $('input[name=memberPn]').val();
+				let pn2 = $('input[name=memberPn2]').val();
+				let pn3 = $('input[name=memberPn3]').val();
+				if(pn.length != 3 || pn2.length != 4 || pn3.length != 4){
+					$('#pnCheck').text("휴대폰 번호를 입력해주세요");
+					$('#pnCheck').css({'font-size': '18px'});
+					$('#pnC').val('false');
+        }else{
+					$('#pnCheck').text("휴대폰 인증을 해주세요");
+					$('#pnCheck').css({'font-size': '18px'});
+					$('#pnC').val('false');
+
+
+        }
+      }
+		})
+		$('#pnChecking').click(function(){
+			let pn = $('input[name=memberPn]').val();
+			let pn2 = $('input[name=memberPn2]').val();
+			let pn3 = $('input[name=memberPn3]').val();
+
+			if(pn.length == 3 || pn2.length == 4 || pn3.length == 4) {
+				let pnc = pn + pn2 + pn3;
+				$('.modal-pnC').val(pnc);
+				$('.sms-modal-wrap').css({'display': 'inline'})
+
+				$('.sendsms').click(function () {
+					$.ajax({
+						url: "/phoneNumContain",
+						type: "post",
+						dataType : "JSON",
+						data: {"memberPn":pnc},
+						success: function (e){
+							if (e == true) {
+								$.ajax({
+									url     : "/smsAuthentication",
+									type    : "post",
+									dataType: "JSON",
+									data    : {"memberPn": pnc},
+									success : function (e) {
+										smsRandomnum = e;
+										console.log(e);
+									}
+								})
+								$('.sendsms').val("재인증받기");
+							} else {
+								alert("이미 가입된 번호입니다.");
+								$('#pnCheck').text("이미 가입된 번호입니다");
+								$('#pnCheck').css({'font-size': '18px'});
+								$('#pnC').val('false');
+							}
+						}
+					})
+				})
+				$('.sendsmsC').click(function () {
+					if ($('.modal-pnC').val()!="" && $('.modal-smsC').val() == smsRandomnum) {
+						$('#pnCheck').text("휴대폰 인증이 되었습니다.");
+						$('#pnCheck').css({'font-size': '18px'});
+						$('#pnC').val('true');
+						$('#pnChecking').css({'display':'none'});
+
+						let inputpn = $('.modal-pnC').val();
+						let pn1 = inputpn.substring(0, 3);
+						let pn2 = inputpn.substring(3,7);
+						let pn3 = inputpn.substring(7,11);
+
+						$('input[name=memberPhoneNum]').val(pn1+'-'+pn2+'-'+pn3);
+						$('input[name=memberPn]').val(pn1);
+						$('input[name=memberPn2]').val(pn2);
+						$('input[name=memberPn3]').val(pn3);
+						$('.modal-wrapper').css({'display': 'none'});
+					} else {
+						alert("다시 확인해주세요");
+					}
+				})
+			}else{
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('휴대폰 번호를 입력해주세요');
+			}
+		})
+
+		$('#ssnChecking').click(function(){
+			let ssn = $('input[name=userSsn1]').val();
+			let ssn2 = $('input[name=userSsn2]').val();
+			let memberName = $('input[name=memberName]').val();
+			let resultSsn = ssn+'-'+ssn2;
+			if(ssn.length == 6 && ssn2.length==7 &&memberName!=""){
+
+				$.ajax({
+					url:"/memberContain",
+					type:'post',
+					dataType:"JSON",
+					data: {"memberSsn":resultSsn},
+					success: function (e){
+						if (e == true) {
+							$('#ssnC').val('true');
+							$('#ssnCheck').text("인증되었습니다");
+							$('#ssnChecking').css({'display':'none'});
+							$('input[name=memberSsn]').val(resultSsn);
+							$('.userSsn').prop('readonly',true);
+							$('input[name=memberName]').prop('readonly',true);
+						} else {
+							alert("이미 가입된 사용자입니다");
+							$('#ssnCheck').text("이미 가입된 사용자입니다");
+							$('#ssnCheck').css({'font-size': '18px'});
+							$('#ssnC').val('false');
+						}
+					}
+				})
+				/*본인인증연결은 비용이 들어가기 때문에 패스*/
+			}else{
+					$('.alert-modal-wrap').css({'display':'inline'});
+					$('.alertText').text('주민등록번호를 입력해주세요');
+      }
+		})
+
+		$('.modal-wrapper').click(function(e){
+			if(!e.target.classList.contains('modalIn')){
+				$('.modal-wrapper').css({'display':'none'})
+			}
+		})
+	  $('.formSubmit').click(function (){
+
+			if($('#idC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('아이디를 확인해주세요');
+			}else if($('#pwC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('비밀번호를 확인해주세요');
+			}else if($('#pwC2').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('두번째 비밀번호를 확인해주세요');
+			}else if($('#nnC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('닉네임을 확인해주세요');
+			}else if($('#ssnC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('사용자 인증을 확인해주세요');
+			}else if($('#pnC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('휴대폰 인증를 확인해주세요');
+			}else{
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.signUpInput-wrapper').submit();
+			}
+    })
+	})
+</script>

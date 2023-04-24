@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<th:block layout:fragment="css">
+  <style>
+      @import url("/CSS/signIn.css");
+  </style>
+</th:block>
+
+<div id="content-wrapper" layout:fragment="content">
+  <div id="signIn-wrapper">
+<!--    action="signIn"-->
+    <form method="post">
+      <span>아이디</span>
+      <input type="text" name="username"/><br/><br/>
+      <span>비밀번호</span>
+      <input type="password" name="password"/><br/><br/>
+      <div class="cookieSave-wrapper">
+        <input type="checkbox" name="cookie" />
+        <input type="hidden" name="cookieSave" value="off"/>
+        <span>아이디 저장</span>
+      </div>
+      <div class="signInBtn-wrapper">
+        <button type="submit" class="signInBtn">로그인</button>
+        <button type="button" class="signUpBtn" onclick="location.href='/signUp'">회원가입</button>
+        <a href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=PECAHnIiw17IlqkcNrm7&state=STATE_STRING&redirect_uri=http://localhost:7890/callBack/naver" class="naverBtn"></a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script layout:fragment="script">
+  $(document).ready(function(){
+    $(document).keyup(function(){
+      if($('input[name=memberId]').val()=="" && $('input[name=memberPw]').val()==""){
+        $('.signInBtn').css({"display":"none"});
+        $('.signUpBtn').css({"display":"inline"});
+      }else{
+        $('.signInBtn').css({"display":"inline"});
+        $('.signUpBtn').css({"display":"none"});
+      }
+    })
+    $(document).click(function(){
+      if($('input[name=cookie]').prop('checked')==false){
+        $('input[name=cookieSave]').val("off");
+      }else{
+        $('input[name=cookieSave]').val("on");
+      }
+    })
+  })
+</script>

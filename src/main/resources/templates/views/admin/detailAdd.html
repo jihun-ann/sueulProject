@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<th:block layout:fragment="css">
+  <style>
+      @import url("/CSS/detailAdd.css");
+  </style>
+</th:block>
+
+<div layout:fragment="content">
+  <div id="detaillAdd-wrap">
+    상품이름, 설명, 종류, 생산지, 맛태그
+    <form id="detailForm" action="/detailSave" method="post" enctype="multipart/form-data">
+      <span>상품 이름</span><br/>
+      <input type="text" name="name"/>
+      <hr/>
+
+      <span>주 종</span><br/>
+      <select name="type">
+        <option value="0">선택</option>
+        <option th:each="tlst : ${tlst}" th:text="${tlst.name}" th:value="${tlst.tid}"></option>
+      </select>
+      <hr/>
+
+      <span>원산지</span><br/>
+      <select name="origin">
+        <option value="0">선택</option>
+        <option th:each="olst : ${olst}" th:text="${olst.name}" th:value="${olst.oid}"></option>
+      </select>
+      <hr/>
+
+      <span>상품 사진</span>
+      <div class="fakeimgbox"><p>사진의 사이즈는<br/>최소 가로 300px,<br/>세로 600px, PNG파일<br/>규격을 이용해주세요</p></div>
+      <input type="file" name="img" class="realimgbox" accept="image/png"/>
+      <hr/>
+
+      <span>상품 설명</span><br/>
+      <textarea name="content"></textarea>
+      <hr/>
+
+      <span>상품 맛 태그</span><br/>
+      <p>선택한 태그</p>
+      <div class="selectedTag"></div>
+      <hr/>
+      <p>태그 찾기</p>
+      <input class="tagSearch" type="text" name="tagSearch" value="태그를 입력해주세요."/>
+      <div class="tagList">
+        <span th:each="ttlst : ${ttlst}" th:value="${ttlst.tid}" onclick="tagSelect(this)">#[[${ttlst.content}]]</span>
+      </div>
+      <hr/>
+
+    </form>
+    <button class="detailAddBtn">상품 등록</button>
+  </div>
+</div>
+
+
+<script layout:fragment="script">
+	$('.fakeimgbox').click(function () {
+		$('.realimgbox').click();
+	})
+
+	$('.realimgbox').change(function (e) {
+		/*change되었을때 해당 객체의 첨부된 파일 [0]번째 파일을
+    reader로 읽기위하여 FileReader 사용*/
+		let reader = new FileReader();
+
+		reader.onload = function (et) {
+			let imgurl = et.target.result;
+			$('.fakeimgbox').css({'background': 'url(' + imgurl + ') center'});
+			$('.fakeimgbox').css({'background-size': '100% 100%'});
+			$('.fakeimgbox > p').css({'display': 'none'});
+		}
+		reader.readAsDataURL(e.target.files[0]);
+	})
+
+
+	$('.tagSearch').focusin(function () {
+		if ($('.tagSearch').val() == "태그를 입력해주세요.") {
+			$('.tagSearch').val("");
+			$('.tagSearch').css({"color": "black"});
+		}
+		$('.tagSearch').focusout(function () {
+			if ($('.tagSearch').val() == "") {
+				$('.tagSearch').val("태그를 입력해주세요.");
+				$('.tagSearch').css({"color": "dimgrey"});
+				$('.tagList').append($('.hidden-span'));
+			}
+		})
+	})
+
+
+	$('.tagSearch').keyup(function (e) {
+		let tagSearch = $('.tagSearch').val();
+
+		if (tagSearch != "" && e.key != "Process") {
+
+			if (tagTextCheck(tagSearch)) {
+				let result = "<span class='tagAdd'>이미 선택된 태그입니다.</span>";
+			  $('.tagList').append().html(result);
+			}else{
+			  /*글을 찾기 위해 input영역에 문자를 작성했을때, 해당 문자를 ajax로 보내 서치하는 기능*/
+			  tasteTagSearch();
+      }
+		} else if (tagSearch == "") {
+			/*글을 지웠을때 선택한 태그 이외에 모든 태그들이 나오는 기능*/
+			unTasteTagLst()
+		}
+	})
+
+
+	$('.detailAddBtn').click(function () {
+		if($('input[name=name]').val() == ""){
+			alert("상품명을 입력해주세요");
+    }else if($('select[name=type]').val() == "0"){
+			alert("상품의 종류를 선택해주세요");
+		}else if($('select[name=origin]').val() == "0"){
+			alert("원산지를 선택해주세요");
+    }else if($('input[name=content]').val() == ""){
+			alert("상품 설명을 입력해주세요");
+		}else{
+
+      let tagValLst = $('.selectedTag span').map(function(){
+				return $(this).attr('value')
+      }).get();
+
+
+      let tagField = document.createElement('input');
+			tagField.setAttribute('type','hidden');
+			tagField.setAttribute('name','tags');
+			tagField.setAttribute('value',tagValLst);
+
+			alert(tagValLst);
+
+			$('#detailForm').append(tagField);
+			$('#detailForm').submit();
+    }
+	})
+
+ function tagHtmlCreate(e){
+	 let result = "";
+	 /*.selectedTag > span 전체를 호출하여, stream과 비슷한 map을 사용하여
+   해당 객체들마다의 value값(즉 tagId값)을 배열의 저장*/
+	 let values = $('.selectedTag span').map(function () {
+		 return parseInt($(this).attr('value'));
+	 }).get();
+
+	 /*해당 배열의 includes 포함하고있는지, ajax해서 돌려받은 값들 중
+   포함하고 있다면 다음으로 넘어가는 continue, 아니라면 list에 나타내는 html문자열을 생성,
+   모두 continue가 되었다면 result의 값이 ""일테니 값이 없다는 뜻, 태그를 추가*/
+	 for (let i = 0; i < e.length; i++) {
+		 if (values.includes(e[i].tid)) {
+			 continue;
+		 }
+		 result += "<span value=" + e[i].tid + " onclick='tagSelect(this)'>#" + e[i].content + "</span>";
+	 }
+	 if (result == "") {
+		 result += "<span class='tagAdd' onclick='tagAdd(this)'>태그 추가하기</span>";
+	 }
+	 return result;
+ }
+
+
+ function tagTextCheck(e) {
+    let checking = $('.selectedTag span').map(function (){
+			let res = $(this).text()
+			return res.substring(1,res.length);
+    }).get();
+		if (checking.includes(e)){
+			return true
+    }else{
+		 return	false
+    }
+	}
+
+	function unTasteTagLst() {
+		$.ajax({
+			url     : "/tagFindAll",
+			type    : "post",
+			dataType: "JSON",
+			success : function (e) {
+        let result = tagHtmlCreate(e);
+				$('.tagList').append().html(result);
+			}
+		})
+	}
+
+	function tasteTagSearch() {
+		let tasteTag = $('.tagSearch').val();
+		$.ajax({
+			url     : "/tagSearch",
+			type    : "post",
+			data    : {"tasteTag": tasteTag},
+			dataType: "JSON",
+			success : function (e) {
+				let result = tagHtmlCreate(e);
+				$('.tagList').append().html(result);
+			}
+		})
+	}
+
+	/*tastetag가 갖고있는 onClick 기능
+  클릭시 부모요소가 tagList라면 selectedTag영역으로 append,
+  이미 옮겨져 있어서 부모요소가 selectedTag라면 remove하는 기능*/
+	function tagSelect(e) {
+		let parentClass = e.parentNode.className;
+		if (parentClass == 'tagList') {
+			$('.selectedTag').append(e);
+		} else if (parentClass == 'selectedTag') {
+			$('.selectedTag').find(e).remove();
+			unTasteTagLst();
+		}
+	}
+
+	function tagAdd(e) {
+		let newTag = $('.tagSearch').val();
+		let result = "";
+		let resultTag;
+		if (newTag.includes(" ")) {
+			/*앞뒤의 있는 공백을 지움*/
+			newTag = newTag.trim();
+			/*여러개의 띄어쓰기를 하나로 바꿈*/
+			newTag = newTag.replace(/\s+/g," ");
+			/*띄어쓰기를 기준으로 문자열을 나눔*/
+			let newTaglst = newTag.split(" ");
+			/*set을 사용하여 중복되는 문자열을 정리함*/
+			let setTag = new Set(newTaglst);
+			resultTag = Array.from(setTag);
+
+		} else {
+			let resultTag = newTag;
+		}
+
+		$.ajax({
+			url:"/tagSave",
+			type:"post",
+			traditional : true,
+			data:{"newTag" : newTag},
+			dataType:"JSON",
+			success:function (e){
+				for (let i = 0; i < e.length; i++) {
+					result += "<span value=" + e[i].tid + " onclick='tagSelect(this)'>#" + e[i].content + "</span>";
+				}
+				$('.selectedTag').append(result);
+			}
+		})
+		$('.tagList').find(e).remove();
+		unTasteTagLst();
+	}
+
+
+</script>
+</html>
