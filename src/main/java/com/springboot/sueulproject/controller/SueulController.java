@@ -98,6 +98,7 @@ public class SueulController {
             return tb;
         }).collect(Collectors.toList());
         System.out.println("tlst>>>>>"+tlst);
+        reqDetail.getTbList().addAll(tlst);
         detailRe.save(reqDetail);
 
         detailService.multipartFileSave(img,reqDetail.getDid());

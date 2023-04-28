@@ -58,6 +58,7 @@
 
 
 <script layout:fragment="script">
+
 	$('.fakeimgbox').click(function () {
 		$('.realimgbox').click();
 	})
@@ -120,6 +121,8 @@
 			alert("원산지를 선택해주세요");
     }else if($('input[name=content]').val() == ""){
 			alert("상품 설명을 입력해주세요");
+		}else if($('input[name=img]').val() == ""){
+			alert("상품 사진을 입력해주세요");
 		}else{
 
       let tagValLst = $('.selectedTag span').map(function(){
@@ -132,7 +135,6 @@
 			tagField.setAttribute('name','tags');
 			tagField.setAttribute('value',tagValLst);
 
-			alert(tagValLst);
 
 			$('#detailForm').append(tagField);
 			$('#detailForm').submit();
@@ -230,14 +232,14 @@
 			resultTag = Array.from(setTag);
 
 		} else {
-			let resultTag = newTag;
+			resultTag = newTag;
 		}
 
 		$.ajax({
 			url:"/tagSave",
 			type:"post",
 			traditional : true,
-			data:{"newTag" : newTag},
+			data:{"newTag" : resultTag},
 			dataType:"JSON",
 			success:function (e){
 				for (let i = 0; i < e.length; i++) {
