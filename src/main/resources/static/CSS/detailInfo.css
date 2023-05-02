@@ -1,0 +1,160 @@
+.detailInfo-wrap{
+    width: 800px;
+    margin: 50px auto 50px;
+    position: relative;
+    border: 1px solid darkgray;
+    border-radius: 10px;
+    padding: 10px;
+
+}
+.detailImg-wrap{
+    width: 200px;
+    height: 350px;
+    margin: 0 auto;
+}
+.detailImg{
+    width: 100%;
+    height: 100%;
+}
+.detailContent-wrap{
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+.detailTable{
+    width: 50%;
+    text-align: center;
+    margin: 0 auto;
+    font-family: Shilla_CultureB-Bold;
+    font-size: 22px;
+    line-height: 50px;
+}
+.tabletd{
+    width: 195px;
+}
+.detailList-wrap{
+    width: 800px;
+    position: absolute;
+    bottom: -40px;
+    display: flex;
+    justify-content: flex-end;
+}
+.detailList{
+    width: 50px;
+    height: 30px;
+    line-height: 25px;
+    background: none;
+    border: 1px solid grey;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.starBookmark-wrap{
+    width: 50%;
+    margin: 50px auto;
+    display: flex;
+    justify-content: space-around;
+}
+.sbBtn{
+    width: 130px;
+    height: 30px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    display: flex;
+    cursor: pointer;
+}
+.sbBtn:hover{
+    box-shadow: 1.5px 1.5px 1.5px 1.5px lightgrey;
+}
+.sbScore{
+font-size: 16px;
+line-height: 30px;
+margin: 0 auto;
+}
+.starRateGraph{
+width: 100px;
+height: 30px;
+position: relative;
+}
+.material-symbols-outlined{
+line-height: 30px;
+font-weight: 300;
+}
+.defaultStar, .flexibleStar{
+width: 100%;
+font-size: 20px;
+line-height: 25px;
+position: absolute;
+color: firebrick;
+top: 0;
+left: 0;
+overflow: hidden;
+}
+.bookmark-off{
+background-color: #e1cfff;
+border: 1px solid #a46eff;
+}
+.modal-wrapper{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+}
+.starRateModal{
+    position: absolute;
+    width: 400px;
+    height: 300px;
+    top: 50%;
+    left: 50%;
+    background: snow;
+    transform: translate(-50%,-50%);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.starBtn{
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+    margin-bottom: 35px;
+}
+.starRateScore{
+    font-size: 25px;
+    color: firebrick;
+}
+.realStar{
+    line-height: 40px;
+    font-size: 35px;
+    color: firebrick;
+}
+.modalBtn{
+    width: 210px;
+    height: 30px;
+    background-color: snow;
+    border: 1px solid grey;
+    font-size: 17px;
+    line-height: 25px;
+    text-align: center;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.starRateBtn{
+    background-color: #FFE4E1;
+}
+.prevStar-wrap{
+    height: 30px;
+}
+.prevStarScore{
+    float: right;
+    color: darkgrey;
+}

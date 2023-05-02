@@ -22,11 +22,11 @@ public class Detail {
     private String name;
     private String content;
     @ColumnDefault("0")
-    private int starRating;
+    private Long starRating;
     @ColumnDefault("0")
-    private int starRateCounting;
+    private int starRateCount;
     @ColumnDefault("0")
-    private int saveCount;
+    private int bookmarkCount;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "detail", cascade = CascadeType.ALL)
     @Builder.Default

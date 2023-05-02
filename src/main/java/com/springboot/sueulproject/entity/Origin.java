@@ -19,4 +19,5 @@ public class Origin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int oid;
     private String name;
+    private String content;
 }

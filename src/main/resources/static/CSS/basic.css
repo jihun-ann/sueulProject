@@ -52,6 +52,7 @@ body{
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+    text-decoration: none;
 }
 .slide-imgC span{
     font-family: Shilla_CultureB-Bold;

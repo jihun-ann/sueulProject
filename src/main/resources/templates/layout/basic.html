@@ -18,16 +18,16 @@
         <div id="header-wrapper">
             <a href="/" id="header-logo"></a>
             <div id="itemList-wrapper">
-                <div class="slide-imgC item-category" href="#"><img src="/Detail/1.png"><span>탁주</span></div>
-                <div class="slide-imgC item-category" href="#"><img src="/Detail/2.png"><span>청주</span></div>
-                <div class="slide-imgC item-category" href="#"><img src="/Detail/3.png"><span>약주</span></div>
-                <div class="slide-imgC item-category" href="#"><img src="/Detail/4.png"><span>과실주</span></div>
-                <div class="slide-imgC item-category" href="#"><img src="/Detail/5.png"><span>증류주</span></div>
+                <a class="slide-imgC item-category" href="/detailList/t1"><img src="/Detail/1.png"><span>탁주</span></a>
+                <a class="slide-imgC item-category" href="/detailList/t2"><img src="/Detail/2.png"><span>청주</span></a>
+                <a class="slide-imgC item-category" href="/detailList/t3"><img src="/Detail/3.png"><span>약주</span></a>
+                <a class="slide-imgC item-category" href="/detailList/t4"><img src="/Detail/4.png"><span>과실주</span></a>
+                <a class="slide-imgC item-category" href="/detailList/t5"><img src="/Detail/5.png"><span>증류주</span></a>
             </div>
         </div>
         <div id="signIn">
             <div class="memberNameLabel-wrapper menuSub" th:if="${member}!=null">
-                <span class="memberNameLabel">[[${member.nickname}]]님</span><span class="material-symbols-outlined">arrow_drop_down</span>
+                <span class="memberNameLabel" th:text="${member.nickname}+'님'"></span><span class="material-symbols-outlined">arrow_drop_down</span>
                 <div class="menu-wrapper menuSub"  th:if="${member.role}=='member'">
                   <a class="memberEdit" href="/memberEdit">회원 정보 수정</a>
                   <a class="likeDetail" href="/likeDetail">관심 상품</a>
@@ -36,7 +36,7 @@
                 <div class="menu-wrapper menuSub"  th:if="${member.role}=='admin'">
                   <a class="memberEditAdmin" href="/memberEditAdmin">회원 정보 수정</a>
                   <a class="detailList" href="/detailList">전체 상품</a>
-                  <a class="detailAdd" href="/detailAdd">상품 추가</a>
+                  <a class="detailAdd" href="/admin/detailAdd">상품 추가</a>
                   <a class="signOut" href="/signOut" >로그 아웃</a>
                 </div>
             </div>

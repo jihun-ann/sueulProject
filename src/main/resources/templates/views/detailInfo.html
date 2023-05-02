@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<th:block layout:fragment="css">
+  <style>
+      @import url("/CSS/detailInfo.css");
+  </style>
+</th:block>
+
+<div layout:fragment="content">
+  <div class="detailInfo-wrap">
+    <input type="hidden" class="detailId" name="did" th:value="${detail.getDid()}"/>
+    <div class="detailImg-wrap">
+      <img class="detailImg" th:src="'/Detail/'+${detail.getDid()}+'.png'"/>
+    </div>
+    <div class="detailContent-wrap">
+      <div class="starBookmark-wrap">
+        <div class="bookmark-on sbBtn" th:if="${bookmark} != null">
+          <span class="material-symbols-outlined" >bookmark</span><span class="sbScore">Bookmarked</span>
+        </div>
+        <div class="bookmark-off sbBtn" th:if="${bookmark} == null">
+          <span class="material-symbols-outlined" >bookmark</span><span class="sbScore">Bookmark</span>
+        </div>
+        <div class="starRate sbBtn">
+          <div class="starRateGraph">
+
+            <div class="defaultStar">
+              <span>☆☆☆☆☆</span>
+            </div>
+            <div class="flexibleStar">
+              <span>★★★★★</span>
+            </div>
+          </div>
+          <span class="sbScore starScore">별점</span>
+        </div>
+      </div>
+      <table class="detailTable">
+        <tbody>
+          <tr>
+            <td class="tabletd" >상품명</td><td th:text="${detail.getName()}"></td>
+          </tr>
+          <tr>
+            <td class="tabletd">종류</td><td th:text="${detail.getType().getName()}"></td>
+          </tr>
+          <tr>
+            <td class="tabletd">원산지</td><td th:text="${detail.getOrigin().getName()}"></td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding-top: 80px">상세 설명</td>
+          </tr>
+          <tr>
+            <td colspan="2" th:text="${detail.getContent()}" style="text-align: left"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tagList-wrap">
+
+      </div>
+    </div>
+    <div class="detailList-wrap">
+      <input th:if="${memberRole} == 'admin'" class="detailList" type="button" value="수정" />
+      <input class="detailList" type="button" value="목록" />
+    </div>
+  </div>
+  <div class="modal-wrapper">
+    <div class="starRateModal">
+      <div class="prevStar-wrap">
+        <span class="prevStarScore" th:if="${starRate} != null" th:text="'이전 별점 : '+${starRate.getStarScore()}" th:value="${starRate.getStarScore()}"></span>
+      </div>
+      <div>
+        <span class="starRateScore">5</span>
+      </div>
+      <div>
+        <button class="starBtn" value="1"><span class="realStar">★</span></button>
+        <button class="starBtn" value="2"><span class="realStar">★</span></button>
+        <button class="starBtn" value="3"><span class="realStar">★</span></button>
+        <button class="starBtn" value="4"><span class="realStar">★</span></button>
+        <button class="starBtn" value="5"><span class="realStar">★</span></button>
+      </div>
+      <button class="starRateBtn modalBtn">확인</button>
+      <button class="starCancelBtn modalBtn">취소</button>
+    </div>
+  </div>
+</div>
+
+<script layout:fragment="script">
+  $(document).ready(function (){
+    let nowScore = [[${detail.getStarRating()}]];
+    let nowCount = [[${detail.getStarRateCount()}]];
+		let result = parseFloat(nowScore)/parseFloat(nowCount);
+		$('.starScore').text(result);
+		result = result*20;
+    $('.flexibleStar').css({'width':result+"%"});
+  })
+
+  $(document).on('click','.detailList',function(){
+    if($(this).val() == '수정'.toString()){
+			let itemNum = $('.detailId').val();
+			location.href = "/admin/detailEdit/"+itemNum;
+    }else if($(this).val() == '목록'.toString()){
+			window.history.go(-1);
+		}
+  })
+
+  $('.sbBtn').click(function(e){
+		let member = $('.memberNameLabel').text();
+    if(member == "" || member ==null){
+      location.href="/signIn";
+    }else{
+      if($(this).hasClass('bookmark-on')){
+        console.log('북마크');
+				let did = "o"+$('.detailId').val();
+
+				$.ajax({
+					url:"/bookmarking",
+					dataType:"JSON",
+					type:"post",
+					data: {"did":did},
+					success:function (e){
+						if(e == true){
+							alert('처리되었습니다.')
+							window.location.reload();
+						}else{
+							alert('다시 시도해주세요.')
+						}
+					}
+				})
+      }if($(this).hasClass('bookmark-off')){
+        console.log('북마크');
+				let did = "f"+$('.detailId').val();
+
+				$.ajax({
+					url:"/bookmarking",
+					dataType:"JSON",
+					type:"post",
+					data: {"did":did},
+					success:function (e){
+						if(e == true){
+							alert('처리되었습니다.')
+							window.location.reload();
+						}else{
+							alert('다시 시도해주세요.')
+						}
+					}
+				})
+      }else if($(this).hasClass('starRate')){
+        $('.modal-wrapper').css({'display':'block'})
+      }
+    }
+  })
+
+  $('.starBtn').click(function (){
+    $('.realStar').css({'color':'lightgrey'});
+		$('.realStar').slice(0,$(this).val()).css({'color':'firebrick'})
+    $('.starRateScore').text($(this).val());
+  })
+
+
+  $('.modalBtn').click(function(){
+		if($(this).hasClass('starCancelBtn')){
+			$('.modal-wrapper').css({'display':'none'})
+    }else if($(this).hasClass('starRateBtn')){
+      let score = $('.starRateScore').text();
+      if($('.prevStarScore').length == 0){
+        let did = "n"+$('.detailId').val();
+
+        $.ajax({
+          url:"/starRateSave",
+          dataType:"JSON",
+          type:"post",
+          data: {"did":did,"score":score},
+          success:function (e){
+            if(e == true){
+							alert('처리되었습니다.')
+              window.location.reload();
+            }else{
+							alert('다시 시도해주세요.')
+            }
+          }
+        })
+
+      }else{
+				let did = "u"+$('.detailId').val();
+				$.ajax({
+					url:"/starRateSave",
+					dataType:"JSON",
+					type:"post",
+					data: {"did":did,"score":score},
+					success:function (e){
+						if(e == true){
+							alert('처리되었습니다.')
+							window.location.reload();
+						}else{
+							alert('다시 시도해주세요.')
+						}
+					}
+				})
+      }
+		}
+  })
+</script>

@@ -21,7 +21,7 @@ public class TasteTag {
     private String content;
 
 
-    @OneToMany(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tasteTag",  cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore

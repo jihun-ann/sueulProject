@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Controller
@@ -27,18 +29,24 @@ public class MemberController {
     }
 
     @GetMapping("/signIn")
-    public String signIn(@CookieValue(value = "memberId",required = false)String memberId,Model mo){
+    public String signIn(@CookieValue(value = "memberId",required = false)String memberId, Model mo, HttpServletRequest request, HttpSession session){
+        String prevUrl = request.getHeader("Referer");
+        prevUrl = prevUrl.substring(21);
+        session.setAttribute("prevUrl",prevUrl);
+
         if(memberId != null){
             Member hasUser = memberRe.findById(memberId).orElseThrow();
             mo.addAttribute("member",hasUser);
-            return "redirect:/";
+            return "redirect:"+prevUrl;
         }else{
             return "views/signIn";
         }
     }
 
     @PostMapping("/signIn")
-    public String userSignIn(Member member, @RequestParam(value="cookieSave") String check, Model mo, HttpServletResponse response) {
+    public String userSignIn(Member member, @RequestParam(value="cookieSave") String check, Model mo, HttpServletResponse response,HttpSession session) {
+        String prevUrl = (String) session.getAttribute("prevUrl");
+
         Optional opUser = memberRe.findById(member.getMemberId());
         if (opUser.isEmpty()) {
             mo.addAttribute("alert", "아이디를 확인해주세요.");
@@ -53,18 +61,23 @@ public class MemberController {
             } else {
                 Cookie cookie = memberService.cookieSet(hasUser.getMemberId(),check);
                 response.addCookie(cookie);
+
                 mo.addAttribute("member", member);
-                return "redirect:/";
+                return "redirect:"+prevUrl;
             }
         }
     }
 
     @GetMapping("/signOut")
-    public String signOut(HttpServletResponse response,Model mo){
+    public String signOut(HttpServletResponse response,Model mo,HttpServletRequest request){
         Cookie cookie = memberService.cookieRemove();
         response.addCookie(cookie);
         mo.addAttribute("member",null);
-        return "redirect:/";
+
+        String prevUrl = request.getHeader("Referer");
+        prevUrl = prevUrl.substring(21);
+
+        return "redirect:"+prevUrl;
     }
     @GetMapping("/signUp")
     public String signUp(){
@@ -72,24 +85,26 @@ public class MemberController {
     }
 
     @PostMapping("/signUp")
-    public String signUpsueul(Member member,HttpServletResponse response,Model mo){
+    public String signUpsueul(Member member,HttpServletResponse response,Model mo,HttpSession session){
         member.setRole("member");
-        System.out.println(member);
 
         memberRe.save(member);
         Cookie cookie = memberService.cookieSet(member.getMemberId(),"off");
         response.addCookie(cookie);
         mo.addAttribute("member",member);
-        return "redirect:/";
+        String prevUrl = (String) session.getAttribute("prevUrl");
+        return "redirect:"+prevUrl;
     }
 
 
     @GetMapping("/callBack/naver")
-    public String callback(HttpServletResponse response,@CookieValue(value = "memberId", required = false)String memberId, Model mo, @RequestParam("code") String code){
+    public String callback(HttpSession session,HttpServletResponse response,@CookieValue(value = "memberId", required = false)String memberId, Model mo, @RequestParam("code") String code){
+        String prevUrl = (String) session.getAttribute("prevUrl");
+
         if(memberId != null){
             Member hasUser = memberRe.findById(memberId).orElseThrow();
             mo.addAttribute("member",hasUser);
-            return "redirect:/";
+            return "redirect:"+prevUrl;
         }else{
             Member member = memberService.naverLogin(code);
             Optional ifUser = memberRe.findById(member.getMemberId());
@@ -102,7 +117,7 @@ public class MemberController {
                     Cookie cookie = memberService.cookieSet(hasUser.getMemberId(),"off");
                     response.addCookie(cookie);
                     mo.addAttribute("member",member);
-                    return "redirect:/";
+                    return "redirect:"+prevUrl;
                 }else{
                     mo.addAttribute("alert","네이버 로그인 오류");
                     mo.addAttribute("/");

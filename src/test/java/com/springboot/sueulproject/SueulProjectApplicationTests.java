@@ -25,7 +25,6 @@ class SueulApplicationTests {
 
     final DefaultMessageService messageService;
     final DetailRepository detailRe;
-    final FoodRepository foodRe;
     final OriginRepository originRe;
     final TasteTagRepository tasteTagRe;
     final TypeRepository typeRe;
@@ -34,11 +33,10 @@ class SueulApplicationTests {
     final TagBridgeRepository tagBridgeRe;
 
     @Autowired
-    public SueulApplicationTests(DetailMapper detailmapper, DetailRepository detailRe, FoodRepository foodRe, OriginRepository originRe, TasteTagRepository tasteTagRe, TypeRepository typeRe, MemberRepository memberRe, TagBridgeRepository tagBridgeRe) {
+    public SueulApplicationTests(DetailMapper detailmapper, DetailRepository detailRe, OriginRepository originRe, TasteTagRepository tasteTagRe, TypeRepository typeRe, MemberRepository memberRe, TagBridgeRepository tagBridgeRe) {
         this.tagBridgeRe = tagBridgeRe;
         this.messageService = NurigoApp.INSTANCE.initialize("NCSNXTUAO5TMAGBM","547E6L3OV0H5SP0HR6LYJWOFJMP19QBD","https://api.coolsms.co.kr");
         this.detailRe = detailRe;
-        this.foodRe = foodRe;
         this.originRe = originRe;
         this.tasteTagRe = tasteTagRe;
         this.typeRe = typeRe;

@@ -11,11 +11,18 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Food {
+public class StarRateBridge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fid;
-    private String name;
-    private String tag;
+    private Long bid;
 
+    @OneToOne
+    @JoinColumn(name="detailId")
+    private Detail detail;
+
+    @OneToOne
+    @JoinColumn(name="memberId")
+    private Member member;
+
+    private int starScore;
 }
