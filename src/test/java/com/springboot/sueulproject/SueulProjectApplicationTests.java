@@ -1,7 +1,6 @@
 package com.springboot.sueulproject;
 
 import com.springboot.sueulproject.entity.*;
-import com.springboot.sueulproject.mapper.DetailMapper;
 import com.springboot.sueulproject.repository.*;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
@@ -29,11 +28,10 @@ class SueulApplicationTests {
     final TasteTagRepository tasteTagRe;
     final TypeRepository typeRe;
     final MemberRepository memberRe;
-    final DetailMapper detailmapper;
     final TagBridgeRepository tagBridgeRe;
 
     @Autowired
-    public SueulApplicationTests(DetailMapper detailmapper, DetailRepository detailRe, OriginRepository originRe, TasteTagRepository tasteTagRe, TypeRepository typeRe, MemberRepository memberRe, TagBridgeRepository tagBridgeRe) {
+    public SueulApplicationTests(DetailRepository detailRe, OriginRepository originRe, TasteTagRepository tasteTagRe, TypeRepository typeRe, MemberRepository memberRe, TagBridgeRepository tagBridgeRe) {
         this.tagBridgeRe = tagBridgeRe;
         this.messageService = NurigoApp.INSTANCE.initialize("NCSNXTUAO5TMAGBM","547E6L3OV0H5SP0HR6LYJWOFJMP19QBD","https://api.coolsms.co.kr");
         this.detailRe = detailRe;
@@ -41,7 +39,6 @@ class SueulApplicationTests {
         this.tasteTagRe = tasteTagRe;
         this.typeRe = typeRe;
         this.memberRe = memberRe;
-        this.detailmapper = detailmapper;
     }
 
     @Test
@@ -74,8 +71,6 @@ class SueulApplicationTests {
 
     @Test
     public void qwe(){
-        List<TasteTag> tag = detailmapper.tagFindeAll();
-        System.out.println(tag);
     }
 
 

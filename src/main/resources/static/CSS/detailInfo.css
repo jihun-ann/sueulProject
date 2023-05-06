@@ -33,6 +33,17 @@
 .tabletd{
     width: 195px;
 }
+.detailinfofont{
+    font-size: 18px;
+}
+.fontflex > a{
+    line-height: 30px;
+    margin: 0 4px;
+    cursor: pointer;
+}
+.fontflex>a:hover{
+    text-decoration: underline;
+}
 .detailList-wrap{
     width: 800px;
     position: absolute;
@@ -40,7 +51,7 @@
     display: flex;
     justify-content: flex-end;
 }
-.detailList{
+.detailEditBtn{
     width: 50px;
     height: 30px;
     line-height: 25px;
@@ -157,4 +168,10 @@ border: 1px solid #a46eff;
 .prevStarScore{
     float: right;
     color: darkgrey;
+}
+.tagList-wrap{
+    width: 400px;
+    margin: 20px auto;
+    display: flex;
+    flex-wrap: wrap;
 }

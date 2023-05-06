@@ -9,11 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Controller
 public class SueulController {
@@ -48,13 +49,14 @@ public class SueulController {
             Member hasUser = memberRe.findById(memberId).orElseThrow();
             mo.addAttribute("member",hasUser);
         }
+        List<Map.Entry>mlst = detailService.todayWeather();
+        int tid1 = Integer.parseInt(mlst.get(0).getKey().toString().substring(1));
+        int tid2 = Integer.parseInt(mlst.get(1).getKey().toString().substring(1));
 
-        List<Integer> alcoholCategory = new ArrayList<>();
-        IntStream.rangeClosed(0,15).forEach(t -> alcoholCategory.add(t));
-        mo.addAttribute("todaysAlcohol",alcoholCategory);
-
-        //List<Detail> detailList = detailRe.findAll();
-        //mo.addAttribute("detailList",detailList);
+        List<Detail> detailList = detailRe.todayWeather(tid1,tid2);
+        int lstsize = detailList.size() <= 10 ? detailList.size():10;
+        detailList = detailList.subList(0,lstsize);
+        mo.addAttribute("detailList",detailList);
         return "views/index";
 
     }
@@ -88,14 +90,17 @@ public class SueulController {
                 return "views/admin/detailAdd";
             }else{
                 mo.addAttribute("alert","권한이 없습니다.");
-                mo.addAttribute("/");
+                mo.addAttribute("url","/");
                 return "views/alert";
             }
         }
     }
 
     @PostMapping("/detailSave")
-    public String detailSave (Detail detail, MultipartFile img, @RequestParam("tags") List<String> tagId){
+    public String detailSave (Detail detail, MultipartFile img, @RequestParam("tags") List<String> tagId,Model mo){
+        detail.setStarRating(0L);
+        detail.setStarRateCount(0);
+        detail.setBookmarkCount(0);
         Detail reqDetail = detailRe.save(detail);
 
         List<TagBridge> tlst = tagId.stream().map(t -> {
@@ -109,8 +114,64 @@ public class SueulController {
 
         detailService.multipartFileSave(img,reqDetail.getDid());
 
+        mo.addAttribute("alert","상품이 등록되었습니다.");
+        mo.addAttribute("url","/");
+        return "views/alert";
+    }
 
-        return "views/admin/detailAdd";
+    @PostMapping("/detailUpdate")
+    public String detailUpdate (HttpSession session,Detail detail, MultipartFile img, @RequestParam("tags") List<String> tagId,Model mo){
+        Detail reqDetail = detailRe.findById(detail.getDid()).orElseThrow();
+        List<TagBridge> lst = tagBridgeRe.findByDetailIdTagBridge(reqDetail.getDid());
+        reqDetail.getTbList().removeAll(lst);
+        tagBridgeRe.deleteAll(lst);
+
+        lst = tagId.stream().map(t -> {
+            Long l = Long.parseLong(t);
+            TasteTag tt = tasteTagRe.findById(l).orElseThrow();
+            TagBridge tb = TagBridge.builder().detail(reqDetail).tasteTag(tt).build();
+            return tb;
+        }).collect(Collectors.toList());
+
+        reqDetail.getTbList().addAll(lst);
+        detailRe.save(reqDetail);
+
+        detailService.multipartFileSave(img,reqDetail.getDid());
+
+        String url = (String) session.getAttribute("itemUrl");
+        mo.addAttribute("alert","상품이 수정되었습니다.");
+        mo.addAttribute("url",url);
+        return "views/alert";
+    }
+
+    @GetMapping("/detailDelete/{did}")
+    public String detailDelete(@PathVariable("did")Long did,@CookieValue(value = "memberId", required = false)String memberId,Model mo,HttpSession session){
+        String prevUrl = (String) session.getAttribute("listUrl");
+        System.out.println(">>>"+prevUrl);
+        if(memberId == null){
+            return "views/signIn";
+        }else{
+            Member member = memberRe.findById(memberId).orElseThrow();
+            if(member.getRole().equals("admin")){
+                Detail detail = detailRe.findById(did).orElseThrow();
+                starRateBridgeRe.deleteByDidAll(detail.getDid());
+                bookmarkBridgeRe.deleteByDidAll(detail.getDid());
+                detailRe.delete(detail);
+                if(prevUrl.equals("") || prevUrl.equals(null) || prevUrl==null){
+                    mo.addAttribute("alert","상품이 삭제되었습니다.");
+                    mo.addAttribute("url","/");
+                    return "views/alert";
+                }else{
+                    mo.addAttribute("alert","상품이 삭제되었습니다.");
+                    mo.addAttribute("url",prevUrl);
+                    return "views/alert";
+                }
+            }else{
+                mo.addAttribute("alert","권한이 없습니다.");
+                mo.addAttribute("url","/");
+                return "views/alert";
+            }
+        }
     }
 
 
@@ -124,13 +185,20 @@ public class SueulController {
             mo.addAttribute("detailList",dtlst);
             mo.addAttribute("kind",kind);
             mo.addAttribute("kindInfo",tinfo);
-        }else if(kind.substring(0,1).equals("o")){
+        }else if(kind.substring(0,1).equals("o")) {
             int origin = Integer.parseInt(kind.substring(1));
             dtlst = detailRe.findByOrigin(origin);
             Origin oinfo = originRe.findById(origin).orElseThrow();
+            mo.addAttribute("detailList", dtlst);
+            mo.addAttribute("kind", kind);
+            mo.addAttribute("kindInfo", oinfo);
+        }else if(kind.substring(0,1).equals("b")){
+            Long tag = Long.parseLong(kind.substring(1));
+            dtlst = detailRe.findByTasteTag(tag);
+            TasteTag tb = tasteTagRe.tagFindByIdOne(tag);
             mo.addAttribute("detailList",dtlst);
             mo.addAttribute("kind",kind);
-            mo.addAttribute("kindInfo",oinfo);
+            mo.addAttribute("tasteTag",tb);
         }else{
             System.out.println("%%%%%%%%%실패%%%%");
         }
@@ -144,7 +212,11 @@ public class SueulController {
     }
 
     @GetMapping("/detailInfo/{did}")
-    public String detailInfo(@PathVariable("did")Long did, Model mo,@CookieValue(value = "memberId", required = false)String memberId){
+    public String detailInfo(HttpSession session,@PathVariable("did")Long did, Model mo, @CookieValue(value = "memberId", required = false)String memberId, HttpServletRequest request){
+        String prevUrl = request.getHeader("Referer");
+        prevUrl = prevUrl.substring(21);
+
+
         Optional optional = detailRe.findById(did);
         if(optional.isEmpty()){
             return "views/redirect";
@@ -158,16 +230,20 @@ public class SueulController {
                 StarRateBridge st = starRateBridgeRe.findByMidDid(memberId,did);
                 mo.addAttribute("bookmark",bm);
                 mo.addAttribute("starRate",st);
-                mo.addAttribute("memberRole",member.getRole());
                 mo.addAttribute("member",member);
+                mo.addAttribute("listUrl",prevUrl);
+                session.setAttribute("listUrl",prevUrl);
             }else{
-                mo.addAttribute("memberRole","nothing");
+
             }
             return "views/detailInfo";
         }
     }
     @GetMapping("/admin/detailEdit/{did}")
-    public String detailEdit(@CookieValue(value = "memberId", required = false)String memberId,@PathVariable("did")Long did, Model mo){
+    public String detailEdit(HttpServletRequest request, HttpSession session, @CookieValue(value = "memberId", required = false)String memberId, @PathVariable("did")Long did, Model mo){
+        String prevUrl = request.getHeader("Referer");
+        prevUrl = prevUrl.substring(21);
+
         if(memberId == null){
             return "views/signIn";
         }else{
@@ -186,15 +262,16 @@ public class SueulController {
                     mo.addAttribute("tlst",tlst);
                     mo.addAttribute("ttlst",ttlst);
                     mo.addAttribute("tblst",selectedttlst);
+                    session.setAttribute("itemUrl",prevUrl);
                     return "views/admin/detailEdit";
                 }else{
                     mo.addAttribute("alert","불완전한 접근입니다.다시 한번 시도하여 주세요.");
-                    mo.addAttribute("/");
+                    mo.addAttribute("url","/");
                     return "views/alert";
                 }
             }else{
                 mo.addAttribute("alert","권한이 없습니다.");
-                mo.addAttribute("/");
+                mo.addAttribute("url","/");
                 return "views/alert";
             }
         }

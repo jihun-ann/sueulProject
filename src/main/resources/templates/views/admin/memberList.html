@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<th:block layout:fragment="css">
+  <style>
+      @import url("/CSS/memberList.css");
+  </style>
+</th:block>
+
+<div layout:fragment="content">
+  <div class="memberList-wrap">
+    <table class="memberList">
+      <thead>
+        <tr>
+          <td colspan="6">일반회원</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="width: 50px">구분</td><td style="width: 360px">아이디</td><td style="width: 120px">이름</td><td style="width: 120px">닉네임</td><td style="width: 70px">권한</td><td style="width: 70px">저장위치</td>
+        </tr>
+        <tr th:each="member : ${memberLst}" class="memberEditBtn" th:value="${member.getMemberId()}">
+          <td th:text="${memberStat.count}"></td><td th:text="${member.getMemberId()}"></td><td th:text="${member.getMemberName()}"></td><td th:text="${member.getNickname()}"></td><td th:text="${member.getRole()}"></td><td th:text="${member.getRoute()}"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="memberList">
+      <thead>
+      <tr>
+        <td colspan="6">관리자</td>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td style="width: 50px">구분</td><td style="width: 360px">아이디</td><td style="width: 120px">이름</td><td style="width: 120px">닉네임</td><td style="width: 70px">권한</td><td style="width: 70px">저장위치</td>
+      </tr>
+      <tr th:each="admin : ${adminLst}" class="memberEditBtn"  th:value="${admin.getMemberId()}">
+        <td th:text="${adminStat.count}"></td><td th:text="${admin.getMemberId()}"></td><td th:text="${admin.getMemberName()}"></td><td th:text="${admin.getNickname()}"></td><td th:text="${admin.getRole()}"></td><td th:text="${admin.getRoute()}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script layout:fragment="script">
+  $('.memberEditBtn').click(function(){
+		let url = $(this).attr('value');
+    location.href="/admin/memberEdit/"+url;
+  })
+</script>

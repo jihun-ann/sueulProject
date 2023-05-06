@@ -39,29 +39,33 @@
       <table class="detailTable">
         <tbody>
           <tr>
-            <td class="tabletd" >상품명</td><td th:text="${detail.getName()}"></td>
+            <td class="tabletd" >상품명</td><td class="detailinfofont" th:text="${detail.getName()}"></td>
           </tr>
           <tr>
-            <td class="tabletd">종류</td><td th:text="${detail.getType().getName()}"></td>
+            <td class="tabletd">종류</td><td class="detailinfofont" th:text="${detail.getType().getName()}"></td>
           </tr>
           <tr>
-            <td class="tabletd">원산지</td><td th:text="${detail.getOrigin().getName()}"></td>
+            <td class="tabletd">원산지</td><td class="detailinfofont" th:text="${detail.getOrigin().getName()}"></td>
           </tr>
           <tr>
-            <td colspan="2" style="padding-top: 80px">상세 설명</td>
+            <td colspan="2" style="padding-top: 60px">상세 설명</td>
           </tr>
           <tr>
-            <td colspan="2" th:text="${detail.getContent()}" style="text-align: left"></td>
+            <td class="detailinfofont" colspan="2" th:text="${detail.getContent()}" style="text-align: left"></td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding-top: 60px">상품 태그</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="detailinfofont fontflex"><a th:onclick="'tagSearchDetail('+${tblist.getTasteTag().getTid()}+')'" th:each="tblist : ${detail.getTbList()}" th:text="'#'+${tblist.getTasteTag().getContent()}" th:value="${tblist.getTasteTag().getTid()}"></a></td>
           </tr>
         </tbody>
       </table>
-      <div class="tagList-wrap">
-
-      </div>
     </div>
     <div class="detailList-wrap">
-      <input th:if="${memberRole} == 'admin'" class="detailList" type="button" value="수정" />
-      <input class="detailList" type="button" value="목록" />
+
+      <input th:if="${member} != null and ${member.getRole()} == 'admin'" class="detailEditBtn" type="button" value="수정" />
+      <input class="detailEditBtn" type="button" value="목록" />
     </div>
   </div>
   <div class="modal-wrapper">
@@ -89,18 +93,26 @@
   $(document).ready(function (){
     let nowScore = [[${detail.getStarRating()}]];
     let nowCount = [[${detail.getStarRateCount()}]];
-		let result = parseFloat(nowScore)/parseFloat(nowCount);
+		let result = Number(nowScore)/Number(nowCount);
+
+		if(isNaN(result)){
+			result = 0;
+    }
 		$('.starScore').text(result);
 		result = result*20;
     $('.flexibleStar').css({'width':result+"%"});
   })
 
-  $(document).on('click','.detailList',function(){
+  $(document).on('click','.detailEditBtn',function(){
     if($(this).val() == '수정'.toString()){
 			let itemNum = $('.detailId').val();
 			location.href = "/admin/detailEdit/"+itemNum;
     }else if($(this).val() == '목록'.toString()){
-			window.history.go(-1);
+			let ListUrl = '[[${listUrl}]]';
+			if(ListUrl == ''){
+				ListUrl = '/';
+      }
+			location.href = ListUrl;
 		}
   })
 
@@ -200,4 +212,9 @@
       }
 		}
   })
+
+  function tagSearchDetail(num){
+		let itemNum = "b"+num;
+		location.href = "/detailList/"+itemNum;
+  }
 </script>

@@ -1,0 +1,42 @@
+.memberList-wrap{
+    width: 800px;
+    margin: 50px auto 50px;
+    position: relative;
+    font-family: Shilla_CultureB-Bold;
+}
+.memberList{
+    width: 100%;
+    margin: 50px auto;
+    text-align: center;
+    border: 1px solid grey;
+    border-radius: 5px;
+}
+.memberList tr{
+    position: relative;
+}
+.memberList tr::after{
+    content: "";
+    width: 98%;
+    height: 1px;
+    bottom: 0px;
+    left: 1%;
+    background-color: grey;
+    position: absolute;
+}
+.memberEditBtn{
+    cursor: pointer;
+}
+.memberEditBtn:hover{
+    background-color: #FFC107;
+}
+.memberList>tbody>tr:last-child::after{
+    content: none;
+}
+.memberList > thead{
+    font-size: 25px;
+    line-height: 60px;
+}
+.memberList > tbody{
+    font-size: 17px;
+    line-height: 30px;
+}

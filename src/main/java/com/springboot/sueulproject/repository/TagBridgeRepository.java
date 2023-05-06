@@ -12,6 +12,8 @@ import java.util.List;
 public interface TagBridgeRepository extends JpaRepository<TagBridge,Long> {
 
     @Query("select tt from TagBridge tb left join TasteTag tt on tb.tasteTag.tid = tt.tid  where tb.detail.did = :did")
-
     public List<TasteTag> findByDetailId(Long did);
+
+    @Query("select tb from TagBridge tb where tb.detail.did =:did")
+    public List<TagBridge> findByDetailIdTagBridge(Long did);
 }

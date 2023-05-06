@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<th:block layout:fragment="css">
+  <style>
+      @import url("/CSS/memberEditAdmin.css");
+  </style>
+</th:block>
+
+<div id="content-wrapper" layout:fragment="content">
+  <div class="memberEdit-wrapper">
+    <div class="memberEditSpan-wrapper">
+      <p id="idCheck">아이디</p>
+      <p id="pwCheck">비밀번호</p>
+      <p id="pwCheck2">비밀번호 확인</p>
+      <p id="nnCheck">별 칭</p>
+      <p id="nameCheck">이 름</p>
+      <p id="ssnCheck">주민등록 번호</p>
+      <p id="pnCheck">휴대폰 번호</p>
+      <p>권 한</p>
+    </div>
+    <form action="/memberEditAdmin" method="post" class="memberEditInput-wrapper" th:object="${user}">
+      <input type="hidden" name="route" th:value="${user.getRoute()}" />
+      <input type="text" class="signUp" name="memberId" pattern="[A-za-z]+" th:value="${user.memberId}" readonly/>
+      <input type="password" class="signUp" name="memberPw" minlength="6" maxlength="13" th:value="${user.getMemberPw()}"/>
+      <input type="password" class="signUp" name="memberPw2" minlength="6" maxlength="13" th:value="${user.getMemberPw()}"/>
+      <input type="text" class="signUp" name="nickname" th:value="${user.nickname}"/>
+      <input type="text" class="signUp" name="memberName" th:value="${user.memberName}"/>
+      <div>
+        <input type="number" class="userSsn signUp" name="userSsn1" maxlength="6" pattern="[0-9]+" oninput="maxLengthC(this)" th:value="${#strings.substring(user.memberSsn,0,6)}"/>
+        <span>-</span>
+        <input type="number" class="userSsn signUp" name="userSsn2" maxlength="7" pattern="[0-9]+" oninput="maxLengthC(this)" th:value="${#strings.substring(user.memberSsn,7,14)}"/>
+        <input type="hidden" name="memberSsn" th:value="${user.getMemberSsn()}"/>
+      </div>
+      <div>
+        <input type="number" class="userPhoneNum signUp" name="memberPn" pattern="[0-9]+" maxlength="3" oninput="maxLengthC(this)" th:value="${#strings.substring(user.memberPhoneNum,0,3)}"/>
+        <span>-</span>
+        <input type="number" class="userPhoneNum signUp" name="memberPn2" pattern="[0-9]+" maxlength="4" oninput="maxLengthC(this)" th:value="${#strings.substring(user.memberPhoneNum,4,8)}"/>
+        <span>-</span>
+        <input type="number" class="userPhoneNum signUp" name="memberPn3" pattern="[0-9]+" maxlength="4" oninput="maxLengthC(this)" th:value="${#strings.substring(user.memberPhoneNum,9,13)}"/>
+        <input type="hidden" name="memberPhoneNum" th:value="${user.getMemberPhoneNum()}" />
+      </div>
+      <select  name="role">
+        <option value="admin" th:selected="${user.getRole()} == 'admin'">admin</option>
+        <option value="member" th:selected="${user.getRole()} == 'member'">member</option>
+      </select>
+      <input type="hidden" name="role" th:value="${user.getRole()}" />
+      <br/><br/>
+      <span type="button"  class="font EditCheck formSubmit" name="formSubmit">회 원 수 정</span>
+    </form>
+    <div>
+      <input type="hidden" id="idC" value="true"/>
+      <input type="hidden" id="pwC" value="true"/>
+      <input type="hidden" id="pwC2" value="true"/>
+      <input type="hidden" id="nnC" value="true"/>
+      <input type="hidden" id="ssnC" value="true"/>
+      <input type="hidden" id="pnC" value="true"/>
+    </div>
+  </div>
+  <div class="modal-wrapper alert-modal-wrap">
+    <div class="alert-modal modalIn modal">
+      <span class="modalIn alertText"></span><br/><br/>
+      <button class="confirm">확 인</button>
+    </div>
+  </div>
+</div>
+
+<script src="/JS/basic.js"></script>
+<script layout:fragment="script">
+  function maxLengthC(object){
+		if(object.value.length > object.maxLength){
+			object.value = object.value.slice(0,object.maxLength);
+    }
+  }
+
+	let smsRandomnum=0;
+
+
+		$(document).keyup(function (e) {
+			if(e.target.getAttribute('name') == 'nickname') {
+				let nickname = $('input[name="nickname"]').val();
+				let currnickname = '[[${user.nickname}]]'
+				if (nickname == "" || nickname == null) {
+					$('#nnCheck').text("별칭을 입력해주세요");
+					$('#nnCheck').css({'font-size': '18px'});
+					$('#nnC').val('false');
+				} else {
+					$.ajax({
+						url     : "/nnChecking",
+						type    : "post",
+						dataType: "JSON",
+						data    : {"nickname": nickname},
+						success : function (e) {
+
+							if (e == true || nickname==currnickname) {
+								$('#nnCheck').text("사용가능한 별칭입니다");
+								$('#nnCheck').css({'font-size': '18px'});
+								$('#nnC').val('true');
+							} else {
+								$('#nnCheck').text("중복되는 별칭입니다");
+								$('#nnCheck').css({'font-size': '18px'});
+								$('#nnC').val('false');
+							}
+						}, error: function (e) {
+							console.log(e);
+						}
+					})
+				}
+			} else if (e.target.getAttribute('name') == 'memberPw') {
+				let pw = $('input[name=memberPw]').val();
+
+				if (pw == "" || pw == null) {
+					$('#pwCheck').text("비밀번호를 입력해주세요");
+					$('#pwCheck').css({'font-size': '18px'});
+					$('#pwC').val('false');
+				} else {
+					$('#pwCheck').text("사용가능한 비밀번호입니다");
+					$('#pwCheck').css({'font-size': '18px'});
+					$('#pwC').val('true');
+				}
+			} else if (e.target.getAttribute('name') == 'memberPw2') {
+				let pw = $('input[name=memberPw]').val();
+				let pw2 = $('input[name=memberPw2]').val();
+				if(pw == "" || pw == null || pw2 == "" || pw2==null) {
+            $('#pwCheck2').text("비밀번호를 입력해주세요");
+            $('#pwCheck2').css({'font-size': '18px'});
+						$('#pwC2').val('false');
+				}else{
+          if(pw == pw2){
+            $('#pwCheck2').text("비밀번호가 일치합니다");
+            $('#pwCheck2').css({'font-size': '18px'});
+						$('#pwC2').val('true');
+          }else{
+						$('#pwCheck2').text("비밀번호가 일치하지 않습니다");
+						$('#pwCheck2').css({'font-size': '18px'});
+						$('#pwC2').val('false');
+					}
+        }
+			}else if(e.target.classList.contains('userSsn')){
+				let ssn = $('input[name=userSsn1]').val();
+				let ssn2 = $('input[name=userSsn2]').val();
+				if(ssn == ""||ssn==null||ssn2==""||ssn2==null){
+					$('#ssnCheck').text("주민등록번호를 입력해주세요");
+					$('#ssnCheck').css({'font-size': '18px'});
+					$('#ssnC').val('false');
+        }else{
+					if(ssn.length == 6 && ssn2.length==7){
+						$('input[name=memberSsn]').val(ssn+'-'+ssn2);
+						$('#ssnCheck').text("인증 되었습니다.");
+						$('#ssnCheck').css({'font-size': '18px'});
+						$('#ssnC').val('true');
+          }
+        }
+      }else if(e.target.classList.contains('userPhoneNum')){
+				let pn = $('input[name=memberPn]').val();
+				let pn2 = $('input[name=memberPn2]').val();
+				let pn3 = $('input[name=memberPn3]').val();
+				if(pn.length != 3 || pn2.length != 4 || pn3.length != 4){
+					$('#pnCheck').text("휴대폰 번호를 입력해주세요");
+					$('#pnCheck').css({'font-size': '18px'});
+					$('#pnC').val('false');
+        }else{
+					$('input[name=memberPhoneNum]').val(pn+'-'+pn2+'-'+pn3);
+					$('#pnCheck').text("인증되었습니다.");
+					$('#pnCheck').css({'font-size': '18px'});
+					$('#pnC').val('true');
+        }
+      }
+		})
+
+
+		$('.modal-wrapper').click(function(e){
+			if(!e.target.classList.contains('modalIn')){
+				$('.modal-wrapper').css({'display':'none'})
+			}
+		})
+
+	  $('.formSubmit').click(function (){
+
+			if($('#pwC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('비밀번호를 확인해주세요');
+			}else if($('#pwC2').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('두번째 비밀번호를 확인해주세요');
+			}else if($('#nnC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('닉네임을 확인해주세요');
+			}else if($('#ssnC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('사용자 인증을 확인해주세요');
+			}else if($('#pnC').val()=="false"){
+				$('.alert-modal-wrap').css({'display':'inline'});
+				$('.alertText').text('휴대폰 인증를 확인해주세요');
+			}else{
+				$('.memberEditInput-wrapper').submit();
+			}
+    })
+
+
+</script>

@@ -171,6 +171,11 @@ body{
 .slide-img span{
     width: 300px;
     height: auto;
+    display: inline-block;
+    font-family: Shilla_CultureB-Bold;
+    font-size: 28px;
+    line-height: 45px;
+    text-align: center;
 }
 .fa-hexagon{
     font-family: 'Material Symbols Outlined';

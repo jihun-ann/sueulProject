@@ -14,10 +14,11 @@
     <input type="hidden" name="kind" th:value="${kind}"/>
     <div class="kindInfo-wrap">
       <div class="detailFont kindName">
-        <span th:text="${kindInfo.getName()}"></span>
+        <span th:if="${kindInfo}!=null" th:text="${kindInfo.getName()}"></span>
+        <span th:if="${kindInfo}==null" th:text="${tasteTag.getContent()}"></span>
       </div>
       <div class="detailFont kindContent">
-        <span th:text="${kindInfo.getContent()}"></span>
+        <span th:if="${kindInfo}!=null" th:text="${kindInfo.getContent()}"></span>
       </div>
     </div>
     <div class="simpleDetail-wrap" th:each="detail : ${detailList}" th:if="${detailStat.index} <= 7">
@@ -58,7 +59,7 @@
 					let result = "";
 
 					if(currentItem == e.length){
-						alert("마지막")
+						//alert("마지막")
 						result += "<div class='lastDetail'><span>마지막 상품입니다.</span></div>"
             $(window).off('scroll');
           }else{

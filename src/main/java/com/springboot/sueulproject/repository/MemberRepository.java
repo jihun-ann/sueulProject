@@ -7,11 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface MemberRepository extends JpaRepository<Member,String> {
 
     @Query("select m from Member m where m.nickname = :membernn")
     public Member findByuserNickname(String membernn);
+
+    @Query(value = "select * from Member m where m.role =:role limit :start,10",nativeQuery = true)
+    public List<Member> findByRoleAll(String role,int start);
 
     @Query("select m from Member m where m.memberSsn = :memberSsn")
     public Member findBymemberSsn(String memberSsn);

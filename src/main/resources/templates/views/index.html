@@ -23,9 +23,9 @@
             </div>
             <div id="itemImgs-wrapper">
                 <div id="itemImgsList-wrapper">
-                    <div th:each="todaysAlcohol : ${todaysAlcohol}"class="slide-img">
-                        <img src="#">
-                        <span></span>
+                    <div th:each="detail : ${detailList}"class="slide-img" th:value="${detail.getDid()}">
+                        <img th:src="'/Detail/'+${detail.getDid()}+'.png'">
+                        <span th:text="${detail.getName()}"></span>
                     </div>
                 </div>
                 <span class="listDetail font">자세히 보기</span>
@@ -55,10 +55,10 @@
             //console.log(bigImgStartX)
             bigImgWrapper.addEventListener("mousemove",onMouseMove);
 
-            document.onmouseup =(e) => {
+            document.onmouseup =() => {
                 bigImgWrapper.removeEventListener('mousemove',onMouseMove);
                 document.onmouseup = null;
-                let left2 = window.getComputedStyle(bigListWrapper).getPropertyValue('left');
+
                 if(bigImgMoveX > -70 && bigImgMoveX < 70){
                     bigListWrapper.style.left = (bigImgCurrentIdx*-320) + 'px';
                 }
@@ -90,9 +90,9 @@
                 let left = window.getComputedStyle(bigListWrapper).getPropertyValue('left');
                 left = left.replace('px','');
                 let result = Number(left)+bigImgMoveX;
-                //console.log(left)
-                //console.log(bigImgMoveX)
-                //console.log(result)
+                console.log(left)
+                console.log(bigImgMoveX)
+                console.log(result)
                 bigListWrapper.style.left = result + 'px';
             }
         }
@@ -113,7 +113,9 @@
 				location.href = "/detailList/"+origin;
       })
 
-
+      $('.listDetail').click(function(){
+				location.href="/detailInfo/"+$('.slide-img').eq(bigImgCurrentIdx).attr('value');
+      })
 
 
     </script>

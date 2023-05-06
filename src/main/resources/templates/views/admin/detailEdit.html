@@ -11,7 +11,8 @@
 
 <div layout:fragment="content">
   <div id="detaillAdd-wrap">
-    <form id="detailForm" action="/detailSave" method="post" enctype="multipart/form-data">
+    <form id="detailForm" action="/detailUpdate" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="did" th:value="${detail.getDid()}" />
       <span>상품 이름</span><br/>
       <input type="text" name="name" th:value="${detail.getName()}"/>
       <hr/>
@@ -53,7 +54,17 @@
       <hr/>
 
     </form>
-    <button class="detailAddBtn">상품 등록</button>
+    <div class="flex-wrap">
+      <button class="detailDeleteBtn">삭 제</button>
+      <button class="detailUpdateBtn">상품 수정</button>
+    </div>
+  </div>
+  <div class="modal-wrap">
+    <div class="modal">
+      <span>정말 삭제하시겠습니까?</span>
+      <button class="modalBtn modal-y">Yes</button>
+      <button class="modalBtn modal-n">No</button>
+    </div>
   </div>
 </div>
 
@@ -77,6 +88,19 @@
 		}
 		reader.readAsDataURL(e.target.files[0]);
 	})
+
+  $('.detailDeleteBtn').click(function (){
+		$('.modal-wrap').css({"display":"block"});
+
+		$('.modalBtn').click(function(){
+			if($(this).hasClass("modal-y")){
+				location.href="/detailDelete/"+$('input[name=did]').val();
+      }else if($(this).hasClass("modal-n")){
+				$(".modal-wrap").css({"display":"none"})
+      }
+    })
+  })
+
 
 
 	$('.tagSearch').focusin(function () {
@@ -113,7 +137,8 @@
 	})
 
 
-	$('.detailAddBtn').click(function () {
+	$('.detailUpdateBtn').click(function () {
+		console.log($('.realimgbox').attr('value'))
 		if($('input[name=name]').val() == ""){
 			alert("상품명을 입력해주세요");
     }else if($('select[name=type]').val() == "0"){
@@ -122,7 +147,7 @@
 			alert("원산지를 선택해주세요");
     }else if($('input[name=content]').val() == ""){
 			alert("상품 설명을 입력해주세요");
-		}else if($('input[name=img]').val() == ""){
+		}else if($('.realimgbox').attr('value') == ""){
 			alert("상품 사진을 입력해주세요");
 		}else{
 

@@ -47,6 +47,7 @@ hr{
     margin: 25px auto 25px;
     box-sizing: border-box;
     border-radius: 5px;
+    border: 1px solid grey;
     background-color: whitesmoke;
     display: flex;
     align-items: center;
@@ -55,14 +56,17 @@ hr{
     cursor: pointer;
     background-repeat: no-repeat;
 }
-.detailAddBtn{
+.flex-wrap{
+    display: flex;
+    justify-content: flex-end;
+}
+.detailUpdateBtn, .detailDeleteBtn{
     width: 100px;
     height: 30px;
-    font-size: 18px;
+    font-size: 16px;
     border-radius: 5px;
     margin: 10px;
     border: 1px solid dimgrey;
-    float: right;
     cursor: pointer;
 }
 .tagList{
@@ -117,4 +121,43 @@ hr{
 }
 .hidden-span{
     display: none;
+}
+.modal-wrap{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+}
+.modal{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 300px;
+    height: 200px;
+    background-color: snow;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.modal > span{
+    line-height: 30px;
+    font-size: 18px;
+}
+.modalBtn{
+    width: 100px;
+    height: 25px;
+    background: none;
+    border: 1px solid grey;
+    border-radius: 5px;
+    margin: 10px;
+    cursor: pointer;
+}
+.modal-y{
+    background-color: cornflowerblue;
+    color: snow;
 }

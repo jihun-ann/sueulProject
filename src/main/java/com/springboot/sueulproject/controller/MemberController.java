@@ -6,15 +6,13 @@ import com.springboot.sueulproject.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -69,19 +67,23 @@ public class MemberController {
     }
 
     @GetMapping("/signOut")
-    public String signOut(HttpServletResponse response,Model mo,HttpServletRequest request){
+    public String signOut(HttpServletResponse response,Model mo){
         Cookie cookie = memberService.cookieRemove();
         response.addCookie(cookie);
         mo.addAttribute("member",null);
 
-        String prevUrl = request.getHeader("Referer");
-        prevUrl = prevUrl.substring(21);
-
-        return "redirect:"+prevUrl;
+        return "redirect:/";
     }
     @GetMapping("/signUp")
-    public String signUp(){
-        return "views/signUp";
+    public String signUp(Model mo,@CookieValue(value = "memberId", required = false)String memberId){
+
+        if(memberId == null) {
+            return "views/signUp";
+        }else{
+            Member member = memberRe.findById(memberId).orElseThrow();
+            mo.addAttribute("member",member);
+            return "/views/index";
+        }
     }
 
     @PostMapping("/signUp")
@@ -190,5 +192,64 @@ public class MemberController {
             mo.addAttribute("member",hasUser);
             return "views/member/memberEdit";
         }
+    }
+
+    @GetMapping("/memberEditAdmin")
+    public String adminMemberEdit(@CookieValue(value = "memberId", required = false)String memberId, Model mo){
+
+        if(memberId != null){
+            Member member = memberRe.findById(memberId).orElseThrow();
+
+            if(member.getRole().equals("admin")){
+                List<Member> mlst = memberRe.findByRoleAll("member",0);
+                List<Member> adlst = memberRe.findByRoleAll("admin",0);
+                mo.addAttribute("member",member);
+                mo.addAttribute("memberLst",mlst);
+                mo.addAttribute("adminLst",adlst);
+                return "views/admin/memberList";
+            }else{
+                mo.addAttribute("alert","권한이 없습니다.");
+                mo.addAttribute("url","/");
+                return "views/alert";
+            }
+        }else{
+            return "views/index";
+        }
+    }
+    @GetMapping("/admin/memberEdit/{userId}")
+    public String memberEditMaster(@CookieValue(value = "memberId", required = false)String memberId, @PathVariable("userId")String userId, Model mo){
+
+        if(memberId != null){
+            Member member = memberRe.findById(memberId).orElseThrow();
+            mo.addAttribute("member",member);
+
+            if(member.getRole().equals("admin")){
+                Member user = memberRe.findById(userId).orElseThrow();
+                mo.addAttribute("member",member);
+                mo.addAttribute("user",user);
+                return "views/admin/memberEdit";
+            }else{
+                mo.addAttribute("alert","권한이 없습니다.");
+                mo.addAttribute("url","/");
+                return "views/alert";
+            }
+        }else{
+            mo.addAttribute("alert","불완전한 접근입니다. 다시 한번 시도하여 주세요.");
+            mo.addAttribute("url","/");
+            return "views/alert";
+        }
+    }
+
+    @PostMapping("/memberEditAdmin")
+    public String memberEditMaster(Model mo,@CookieValue(value = "memberId", required = false)String memberId,Member user){
+        if(memberId != null){
+            Member member = memberRe.findById(memberId).orElseThrow();
+            mo.addAttribute("member",member);
+
+            if(member.getRole().equals("admin")) {
+                memberRe.save(user);
+            }
+        }
+        return "redirect:/memberEditAdmin";
     }
 }

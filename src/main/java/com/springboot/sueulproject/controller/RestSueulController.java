@@ -4,6 +4,8 @@ import com.springboot.sueulproject.entity.*;
 import com.springboot.sueulproject.repository.*;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +67,7 @@ public class RestSueulController {
         message.setTo(memberPn);
         message.setText(smsContent);
 
-        //SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
+        SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
 
         return random;
     }
