@@ -11,7 +11,6 @@
 
 <div layout:fragment="content">
   <div id="detaillAdd-wrap">
-    상품이름, 설명, 종류, 생산지, 맛태그
     <form id="detailForm" action="/detailSave" method="post" enctype="multipart/form-data">
       <span>상품 이름</span><br/>
       <input type="text" name="name"/>
@@ -37,7 +36,7 @@
       <hr/>
 
       <span>상품 설명</span><br/>
-      <textarea name="content"></textarea>
+      <textarea class="detailContent" name="content"></textarea>
       <hr/>
 
       <span>상품 맛 태그</span><br/>
@@ -76,6 +75,7 @@
 		}
 		reader.readAsDataURL(e.target.files[0]);
 	})
+
 
 
 	$('.tagSearch').focusin(function () {
@@ -135,6 +135,11 @@
 			tagField.setAttribute('name','tags');
 			tagField.setAttribute('value',tagValLst);
 
+
+			let text = $('.detailContent').val();
+			text = text.replace(/(?:\r\n|\r|\n)/g, '<br>');
+			$('.detailContent').val(text);
+			console.log($('.detailContent').val());
 
 			$('#detailForm').append(tagField);
 			$('#detailForm').submit();
@@ -210,10 +215,12 @@
 		let parentClass = e.parentNode.className;
 		if (parentClass == 'tagList') {
 			$('.selectedTag').append(e);
+			$('.tagSearch').val("태그를 입력해주세요.");
+			$('.tagSearch').css({"color": "dimgrey"});
 		} else if (parentClass == 'selectedTag') {
 			$('.selectedTag').find(e).remove();
-			unTasteTagLst();
 		}
+			unTasteTagLst();
 	}
 
 	function tagAdd(e) {
@@ -249,6 +256,8 @@
 			}
 		})
 		$('.tagList').find(e).remove();
+		$('.tagSearch').val("태그를 입력해주세요.");
+		$('.tagSearch').css({"color": "dimgrey"});
 		unTasteTagLst();
 	}
 

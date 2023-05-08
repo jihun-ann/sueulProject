@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -96,6 +97,7 @@ public class SueulController {
         }
     }
 
+
     @PostMapping("/detailSave")
     public String detailSave (Detail detail, MultipartFile img, @RequestParam("tags") List<String> tagId,Model mo){
         detail.setStarRating(0L);
@@ -121,7 +123,7 @@ public class SueulController {
 
     @PostMapping("/detailUpdate")
     public String detailUpdate (HttpSession session,Detail detail, MultipartFile img, @RequestParam("tags") List<String> tagId,Model mo){
-        Detail reqDetail = detailRe.findById(detail.getDid()).orElseThrow();
+        Detail reqDetail = detailRe.save(detail);
         List<TagBridge> lst = tagBridgeRe.findByDetailIdTagBridge(reqDetail.getDid());
         reqDetail.getTbList().removeAll(lst);
         tagBridgeRe.deleteAll(lst);
@@ -154,8 +156,15 @@ public class SueulController {
             Member member = memberRe.findById(memberId).orElseThrow();
             if(member.getRole().equals("admin")){
                 Detail detail = detailRe.findById(did).orElseThrow();
+
+                String path = "src/main/resources/static/detail/"+detail.getDid()+".png";
+                System.out.println(">>>>>>>"+path);
+                File file = new File(path);
+                file.delete();
+
                 starRateBridgeRe.deleteByDidAll(detail.getDid());
                 bookmarkBridgeRe.deleteByDidAll(detail.getDid());
+
                 detailRe.delete(detail);
                 if(prevUrl.equals("") || prevUrl.equals(null) || prevUrl==null){
                     mo.addAttribute("alert","상품이 삭제되었습니다.");

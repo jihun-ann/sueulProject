@@ -125,7 +125,7 @@ public class DetailServiceImpl implements DetailService{
                     switch (test){
                         case "0" : t3++; t4++; break; //없음 - 과실주, 약주
                         case "1" : t1++; break; //비 - 탁주
-                        case "2" : t2++; break; //비&눈 - 청주
+                        case "2" : t5++; break; //비&눈 - 증류주
                         case "3" : t4++; break; //눈 - 과실주
                         case "5" : t1++; break; //빗방울 - 탁주
                         case "6" : t5++; break; //빗방울&눈날림 - 증류주

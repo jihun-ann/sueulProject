@@ -50,8 +50,8 @@
           <tr>
             <td colspan="2" style="padding-top: 60px">상세 설명</td>
           </tr>
-          <tr>
-            <td class="detailinfofont" colspan="2" th:text="${detail.getContent()}" style="text-align: left"></td>
+          <tr class="detailContentTr">
+            <td class=" detailContent" colspan="2" style="text-align: left; font-size: 17px" th:value="${detail.getContent()}"></td>
           </tr>
           <tr>
             <td colspan="2" style="padding-top: 60px">상품 태그</td>
@@ -94,6 +94,7 @@
     let nowScore = [[${detail.getStarRating()}]];
     let nowCount = [[${detail.getStarRateCount()}]];
 		let result = Number(nowScore)/Number(nowCount);
+		$(".detailContent").append($('.detailContent').attr('value'));
 
 		if(isNaN(result)){
 			result = 0;

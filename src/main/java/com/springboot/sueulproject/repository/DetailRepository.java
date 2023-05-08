@@ -17,6 +17,7 @@ public interface DetailRepository extends JpaRepository<Detail,Long> {
     @Query("select d from Detail d left join TagBridge tb on d.did = tb.detail.did where tb.tasteTag.tid = :tid order by d.did")
     public List<Detail> findByTasteTag(Long tid);
 
-    @Query("select d from Detail d where d.type.tid =:tid1 or d.type.tid= :tid2 order by d.bookmarkCount desc, d.starRating/d.starRateCount desc, d.did")
+    @Query(value = "select * from Detail where type_id =:tid1 or type_id= :tid2 order by rand()",nativeQuery = true)
     public List<Detail> todayWeather(int tid1,int tid2);
+
 }

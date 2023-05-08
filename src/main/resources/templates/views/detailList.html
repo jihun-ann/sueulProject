@@ -18,7 +18,7 @@
         <span th:if="${kindInfo}==null" th:text="${tasteTag.getContent()}"></span>
       </div>
       <div class="detailFont kindContent">
-        <span th:if="${kindInfo}!=null" th:text="${kindInfo.getContent()}"></span>
+        <span class="kindContentSpan" th:if="${kindInfo}!=null" th:value="${kindInfo.getContent()}"></span>
       </div>
     </div>
     <div class="simpleDetail-wrap" th:each="detail : ${detailList}" th:if="${detailStat.index} <= 7">
@@ -33,6 +33,10 @@
 <script layout:fragment="script">
   let nowpage = 1;
 	let kind = $('input[name=kind]').val();
+
+	$(document).ready(function (){
+		$('.kindContentSpan').append($('.kindContentSpan').attr('value'));
+  })
 
   $(document).on('click','.simpleDetail', function (e){
 		let itemNum = $(e.target).attr('name');

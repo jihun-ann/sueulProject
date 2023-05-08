@@ -22,4 +22,5 @@ public class Member {
     private String memberPhoneNum;
     private String role;
     private String route;
+
 }

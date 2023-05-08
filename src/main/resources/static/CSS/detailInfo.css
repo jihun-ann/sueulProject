@@ -14,7 +14,7 @@
 }
 .detailImg{
     width: 100%;
-    height: 100%;
+    height: 100%
 }
 .detailContent-wrap{
     width: 100%;
@@ -28,10 +28,11 @@
     margin: 0 auto;
     font-family: Shilla_CultureB-Bold;
     font-size: 22px;
-    line-height: 50px;
+    line-height: 25px;
 }
 .tabletd{
     width: 195px;
+    line-height: 50px;
 }
 .detailinfofont{
     font-size: 18px;

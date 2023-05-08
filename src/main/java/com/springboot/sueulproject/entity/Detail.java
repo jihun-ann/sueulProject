@@ -32,7 +32,7 @@ public class Detail {
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
-    List<TagBridge> tbList = new ArrayList<>();
+    private List<TagBridge> tbList = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name="originId")

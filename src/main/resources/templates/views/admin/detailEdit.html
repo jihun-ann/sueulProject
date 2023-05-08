@@ -13,6 +13,9 @@
   <div id="detaillAdd-wrap">
     <form id="detailForm" action="/detailUpdate" method="post" enctype="multipart/form-data">
       <input type="hidden" name="did" th:value="${detail.getDid()}" />
+      <input type="hidden" name="bookmarkCount" th:value="${detail.getBookmarkCount()}" />
+      <input type="hidden" name="starRateCount" th:value="${detail.getStarRateCount()}" />
+      <input type="hidden" name="starRating" th:value="${detail.getStarRating()}" />
       <span>상품 이름</span><br/>
       <input type="text" name="name" th:value="${detail.getName()}"/>
       <hr/>

@@ -24,7 +24,7 @@
             <div id="itemImgs-wrapper">
                 <div id="itemImgsList-wrapper">
                     <div th:each="detail : ${detailList}"class="slide-img" th:value="${detail.getDid()}">
-                        <img th:src="'/Detail/'+${detail.getDid()}+'.png'">
+                      <div class="itemImg" th:value="'/Detail/'+${detail.getDid()}+'.png'"></div>
                         <span th:text="${detail.getName()}"></span>
                     </div>
                 </div>
@@ -35,6 +35,13 @@
         </div>
 
     <script layout:fragment="script">
+        $(document).ready(function(){
+					$('.itemImg').each(function(){
+						$(this).css({"background":"url("+$(this).attr('value')+") center"});
+
+          })
+        })
+
         const bigImgWrapper = document.querySelector('#itemImgs-wrapper')
         const bigListWrapper = document.querySelector('#itemImgsList-wrapper')
         let bigImgCurrentIdx = 0;
