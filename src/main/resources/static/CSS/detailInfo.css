@@ -23,7 +23,7 @@
     flex-direction: column;
 }
 .detailTable{
-    width: 50%;
+    width: 65%;
     text-align: center;
     margin: 0 auto;
     font-family: Shilla_CultureB-Bold;
@@ -175,4 +175,24 @@ border: 1px solid #a46eff;
     margin: 20px auto;
     display: flex;
     flex-wrap: wrap;
+}
+.nShop-wrap{
+    margin: 50px auto;
+}
+.naverShop{
+    width: 170px;
+    display: inline-block;
+    text-decoration: none;
+    vertical-align: top;
+}
+.naverShop>img{
+    width: 160px;
+    height: 160px;
+    border-radius: 5px;
+    vertical-align: top;
+}
+.naverShop>span{
+    font-size: 15px;
+    font-family: none;
+    display: block;
 }

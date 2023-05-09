@@ -1,5 +1,6 @@
 package com.springboot.sueulproject.controller;
 
+import com.springboot.sueulproject.DTO.NaverShopingMapDTO;
 import com.springboot.sueulproject.entity.*;
 import com.springboot.sueulproject.repository.*;
 import com.springboot.sueulproject.service.DetailService;
@@ -44,7 +45,9 @@ public class SueulController {
     }
 
     @GetMapping("/")
-    public String root(@CookieValue(value = "memberId", required = false)String memberId, Model mo){
+    public String root(
+            @CookieValue(value = "memberId", required = false)String memberId,
+            Model mo){
 
         if(memberId != null){
             Member hasUser = memberRe.findById(memberId).orElseThrow();
@@ -58,12 +61,17 @@ public class SueulController {
         int lstsize = detailList.size() <= 10 ? detailList.size():10;
         detailList = detailList.subList(0,lstsize);
         mo.addAttribute("detailList",detailList);
+
+
         return "views/index";
 
     }
 
     @GetMapping("/logIn")
-    public String login(@CookieValue(value = "memberId", required = false)String memberId, Model mo){
+    public String login(
+            @CookieValue(value = "memberId", required = false)String memberId,
+            Model mo){
+
         if(memberId != null) {
             Member hasUser = memberRe.findById(memberId).orElseThrow();
             mo.addAttribute("member",hasUser);
@@ -74,7 +82,10 @@ public class SueulController {
     }
 
     @GetMapping("/admin/detailAdd")
-    public String detailAdd(@CookieValue(value = "memberId", required = false)String memberId, Model mo){
+    public String detailAdd(
+            @CookieValue(value = "memberId", required = false)String memberId,
+            Model mo){
+
         if(memberId == null){
            return "views/signIn";
         }else{
@@ -99,7 +110,12 @@ public class SueulController {
 
 
     @PostMapping("/detailSave")
-    public String detailSave (Detail detail, MultipartFile img, @RequestParam("tags") List<String> tagId,Model mo){
+    public String detailSave (
+            Detail detail,
+            MultipartFile img,
+            @RequestParam("tags") List<String> tagId,
+            Model mo){
+
         detail.setStarRating(0L);
         detail.setStarRateCount(0);
         detail.setBookmarkCount(0);
@@ -122,7 +138,13 @@ public class SueulController {
     }
 
     @PostMapping("/detailUpdate")
-    public String detailUpdate (HttpSession session,Detail detail, MultipartFile img, @RequestParam("tags") List<String> tagId,Model mo){
+    public String detailUpdate (
+            HttpSession session,
+            Detail detail,
+            MultipartFile img,
+            @RequestParam("tags") List<String> tagId,
+            Model mo){
+
         Detail reqDetail = detailRe.save(detail);
         List<TagBridge> lst = tagBridgeRe.findByDetailIdTagBridge(reqDetail.getDid());
         reqDetail.getTbList().removeAll(lst);
@@ -147,7 +169,11 @@ public class SueulController {
     }
 
     @GetMapping("/detailDelete/{did}")
-    public String detailDelete(@PathVariable("did")Long did,@CookieValue(value = "memberId", required = false)String memberId,Model mo,HttpSession session){
+    public String detailDelete(
+            @PathVariable("did")Long did,
+            @CookieValue(value = "memberId", required = false)String memberId,
+            Model mo,HttpSession session){
+
         String prevUrl = (String) session.getAttribute("listUrl");
         System.out.println(">>>"+prevUrl);
         if(memberId == null){
@@ -185,7 +211,11 @@ public class SueulController {
 
 
     @GetMapping("/detailList/{kind}")
-    public String detailList(@CookieValue(value = "memberId", required = false)String memberId,@PathVariable("kind")String kind, Model mo) {
+    public String detailList(
+            @CookieValue(value = "memberId", required = false)String memberId,
+            @PathVariable("kind")String kind,
+            Model mo) {
+
         List<Detail> dtlst;
         if(kind.substring(0,1).equals("t")){
             int type = Integer.parseInt(kind.substring(1));
@@ -221,7 +251,14 @@ public class SueulController {
     }
 
     @GetMapping("/detailInfo/{did}")
-    public String detailInfo(HttpSession session,@PathVariable("did")Long did, Model mo, @CookieValue(value = "memberId", required = false)String memberId, HttpServletRequest request){
+    public String detailInfo(
+            HttpSession session,
+            @PathVariable("did")Long did,
+            Model mo,
+            @CookieValue(value = "memberId", required = false)String memberId,
+            HttpServletRequest request){
+
+
         String prevUrl = request.getHeader("Referer");
         prevUrl = prevUrl.substring(21);
 
@@ -231,6 +268,8 @@ public class SueulController {
             return "views/redirect";
         }else {
             Detail detail = (Detail) optional.orElseThrow();
+            NaverShopingMapDTO shopMap =  detailService.naverShopingSearch(detail.getName());
+            mo.addAttribute("nShop",shopMap);
             mo.addAttribute("detail",detail);
 
             if(memberId != null){
@@ -249,7 +288,13 @@ public class SueulController {
         }
     }
     @GetMapping("/admin/detailEdit/{did}")
-    public String detailEdit(HttpServletRequest request, HttpSession session, @CookieValue(value = "memberId", required = false)String memberId, @PathVariable("did")Long did, Model mo){
+    public String detailEdit(
+            HttpServletRequest request,
+            HttpSession session,
+            @CookieValue(value = "memberId", required = false)String memberId,
+            @PathVariable("did")Long did,
+            Model mo){
+
         String prevUrl = request.getHeader("Referer");
         prevUrl = prevUrl.substring(21);
 

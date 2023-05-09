@@ -2,10 +2,12 @@ package com.springboot.sueulproject.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springboot.sueulproject.DTO.NaverShopingMapDTO;
 import com.springboot.sueulproject.profile.WeatherVO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -156,5 +158,26 @@ public class DetailServiceImpl implements DetailService{
         });
 
         return mlst.subList(0,2);
+    }
+
+    public NaverShopingMapDTO naverShopingSearch(String detailname){
+        WebClient webClient = WebClient.create();
+
+        String result = webClient.get().uri("https://openapi.naver.com/v1/search/shop.json?query="+detailname+"&display=3")
+                .header("X-Naver-Client-Id","PECAHnIiw17IlqkcNrm7")
+                .header("X-Naver-Client-Secret","MET2Ze1XgJ")
+                .retrieve().bodyToMono(String.class).block();
+
+        System.out.println(">>>>>>"+result);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        NaverShopingMapDTO shopmap;
+        try {
+            shopmap = objectMapper.readValue(result, NaverShopingMapDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return shopmap;
     }
 }

@@ -54,6 +54,12 @@
             <td class=" detailContent" colspan="2" style="text-align: left; font-size: 17px" th:value="${detail.getContent()}"></td>
           </tr>
           <tr>
+            <td colspan="2" style="padding-top: 60px">네이버 쇼핑</td>
+          </tr>
+          <tr>
+            <td colspan="2"  class="nShop-wrap"><a class="naverShop" th:each="item : ${nShop.getItems()}"  th:href="${item.getLink()}"><img th:src="${item.getImage()}" /><span class="nshopSpan nshopitem" th:value="${item.getTitle()}"></span><span class="nshopitem nshopPrice" th:value="${item.getLprice()}+'원'"></span></a></td>
+          </tr>
+          <tr>
             <td colspan="2" style="padding-top: 60px">상품 태그</td>
           </tr>
           <tr>
@@ -102,6 +108,16 @@
 		$('.starScore').text(result);
 		result = result*20;
     $('.flexibleStar').css({'width':result+"%"});
+
+		$('.nshopitem').each(function (){
+			if($(this).hasClass("nshopSpan")){
+			  $(this).append($(this).attr('value'));
+			}else if($(this).hasClass("nshopPrice")){
+				let price = $(this).attr('value');
+				price = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); //10,000
+        $(this).text(price+"원");
+      }
+    })
   })
 
   $(document).on('click','.detailEditBtn',function(){
