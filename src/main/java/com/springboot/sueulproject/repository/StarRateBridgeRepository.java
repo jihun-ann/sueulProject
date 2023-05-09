@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface StarRateBridgeRepository extends JpaRepository<StarRateBridge,Long> {
 
-    @Query("select st from StarRateBridge st where st.member.memberId = :Mid and st.detail.did = :Did")
+    @Query("select st from star_rate_bridge st where st.member.memberId = :Mid and st.detail.did = :Did")
     public StarRateBridge findByMidDid(String Mid, Long Did);
 
     @Modifying
     @Transactional
-    @Query("delete from StarRateBridge st where st.detail.did =:did")
+    @Query("delete from star_rate_bridge st where st.detail.did =:did")
     public int deleteByDidAll(Long did);
 }

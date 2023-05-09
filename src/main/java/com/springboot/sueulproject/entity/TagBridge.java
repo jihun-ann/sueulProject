@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
+@Entity(name = "tag_bridge")
 public class TagBridge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

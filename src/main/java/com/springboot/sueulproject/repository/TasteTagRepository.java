@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface TasteTagRepository extends JpaRepository<TasteTag,Long> {
 
-    @Query("select t from TasteTag t where t.content like :tagName%")
+    @Query("select t from taste_tag t where t.content like :tagName%")
     public List<TasteTag> tagFindByName(String tagName);
 
-    @Query("select t from TasteTag t where t.tid=:tagId")
+    @Query("select t from taste_tag t where t.tid=:tagId")
     public TasteTag tagFindByIdOne(Long tagId);
 }

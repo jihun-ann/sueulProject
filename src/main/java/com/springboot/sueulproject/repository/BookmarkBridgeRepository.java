@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface BookmarkBridgeRepository extends JpaRepository<BookmarkBridge,Long> {
 
-    @Query("select bm from BookmarkBridge bm where bm.member.memberId = :Mid and bm.detail.did = :Did")
+    @Query("select bm from bookmark_bridge bm where bm.member.memberId = :Mid and bm.detail.did = :Did")
     public BookmarkBridge findByMidDid(String Mid, Long Did);
 
     @Modifying
     @Transactional
-    @Query("delete from BookmarkBridge bm where bm.detail.did =:did")
+    @Query("delete from bookmark_bridge bm where bm.detail.did =:did")
     public int deleteByDidAll(Long did);
 }

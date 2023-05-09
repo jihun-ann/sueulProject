@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "bookmark_bridge")
 @Getter
 @Setter
 @ToString

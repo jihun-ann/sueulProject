@@ -97,9 +97,6 @@
                 let left = window.getComputedStyle(bigListWrapper).getPropertyValue('left');
                 left = left.replace('px','');
                 let result = Number(left)+bigImgMoveX;
-                console.log(left)
-                console.log(bigImgMoveX)
-                console.log(result)
                 bigListWrapper.style.left = result + 'px';
             }
         }

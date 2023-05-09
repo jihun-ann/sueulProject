@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "star_rate_bridge")
 @Getter
 @Setter
 @ToString
