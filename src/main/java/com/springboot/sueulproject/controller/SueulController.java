@@ -238,6 +238,14 @@ public class SueulController {
             mo.addAttribute("detailList",dtlst);
             mo.addAttribute("kind",kind);
             mo.addAttribute("tasteTag",tb);
+        }else if(kind.substring(0,1).equals("m")){
+            if(memberId != null){
+            dtlst = detailRe.bookmarkFindByMemberId(memberId);
+            mo.addAttribute("detailList",dtlst);
+            mo.addAttribute("kind",kind);
+            }else{
+                return "views/signIn";
+            }
         }else{
             System.out.println("%%%%%%%%%실패%%%%");
         }
@@ -260,7 +268,7 @@ public class SueulController {
 
 
         String prevUrl = request.getHeader("Referer");
-        prevUrl = prevUrl.substring(21);
+        prevUrl = prevUrl.substring(24);
 
 
         Optional optional = detailRe.findById(did);
@@ -296,7 +304,7 @@ public class SueulController {
             Model mo){
 
         String prevUrl = request.getHeader("Referer");
-        prevUrl = prevUrl.substring(21);
+        prevUrl = prevUrl.substring(24);
 
         if(memberId == null){
             return "views/signIn";

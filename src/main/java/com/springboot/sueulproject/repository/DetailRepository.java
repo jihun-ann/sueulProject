@@ -20,4 +20,6 @@ public interface DetailRepository extends JpaRepository<Detail,Long> {
     @Query(value = "select * from detail where type_id =:tid1 or type_id= :tid2 order by rand()",nativeQuery = true)
     public List<Detail> todayWeather(int tid1,int tid2);
 
+    @Query(value = "select d.* from detail d left join bookmark_bridge bb on d.did = bb.detail_id where bb.member_id =:memberid",nativeQuery = true)
+    public List<Detail> bookmarkFindByMemberId(String memberid);
 }

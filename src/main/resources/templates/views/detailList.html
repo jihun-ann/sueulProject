@@ -15,7 +15,8 @@
     <div class="kindInfo-wrap">
       <div class="detailFont kindName">
         <span th:if="${kindInfo}!=null" th:text="${kindInfo.getName()}"></span>
-        <span th:if="${kindInfo}==null" th:text="${tasteTag.getContent()}"></span>
+        <span th:if="${kindInfo}==null and ${tasteTag}!=null" th:text="${tasteTag.getContent()}"></span>
+        <span th:if="${kindInfo}==null and ${tasteTag}==null" th:text="${member.nickname}+'님의 관심 상품'"></span>
       </div>
       <div class="detailFont kindContent">
         <span class="kindContentSpan" th:if="${kindInfo}!=null" th:value="${kindInfo.getContent()}"></span>

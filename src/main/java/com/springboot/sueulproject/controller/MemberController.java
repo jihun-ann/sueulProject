@@ -29,7 +29,7 @@ public class MemberController {
     @GetMapping("/signIn")
     public String signIn(@CookieValue(value = "memberId",required = false)String memberId, Model mo, HttpServletRequest request, HttpSession session){
         String prevUrl = request.getHeader("Referer");
-        prevUrl = prevUrl.substring(21);
+        prevUrl = prevUrl.substring(24);
         session.setAttribute("prevUrl",prevUrl);
 
         if(memberId != null){
@@ -99,10 +99,15 @@ public class MemberController {
     }
 
 
-    @GetMapping("/callBack/naver")
-    public String callback(HttpSession session,HttpServletResponse response,@CookieValue(value = "memberId", required = false)String memberId, Model mo, @RequestParam("code") String code){
-        String prevUrl = (String) session.getAttribute("prevUrl");
+    @RequestMapping("/callback/naver")
+    public String callback(@RequestParam("code") String code,
+                           HttpSession session,
+                           HttpServletResponse response,
+                           @CookieValue(value = "memberId", required = false)String memberId,
+                           Model mo){
 
+        String prevUrl = (String) session.getAttribute("prevUrl");
+        System.out.println(">>>>>>>>>>>>>>>>>"+prevUrl);
         if(memberId != null){
             Member hasUser = memberRe.findById(memberId).orElseThrow();
             mo.addAttribute("member",hasUser);

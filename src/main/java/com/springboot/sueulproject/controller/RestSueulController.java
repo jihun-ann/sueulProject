@@ -126,14 +126,26 @@ public class RestSueulController {
 
 
     @RequestMapping("/detailPaging")
-    public List<Detail> detailPaging(@RequestParam("kind") String kind) {
+    public List<Detail> detailPaging(
+            @CookieValue(value = "memberId", required = false)String memberId,
+            @RequestParam("kind") String kind) {
+
         if (kind.substring(0, 1).equals("t")) {
             int type = Integer.parseInt(kind.substring(1));
             return detailRe.findByType(type);
         } else if (kind.substring(0, 1).equals("o")) {
             int origin = Integer.parseInt(kind.substring(1));
             return detailRe.findByOrigin(origin);
-        } else {
+        } else if(kind.substring(0,1).equals("b")){
+            Long tag = Long.parseLong(kind.substring(1));
+            return detailRe.findByTasteTag(tag);
+        } else if(kind.substring(0,1).equals("m")){
+            if(memberId !=null) {
+                return detailRe.bookmarkFindByMemberId(memberId);
+            }else{
+                return null;
+            }
+        }else {
             return null;
         }
     }
