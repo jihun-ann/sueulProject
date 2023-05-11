@@ -260,11 +260,14 @@
 				$('.sms-modal-wrap').css({'display': 'inline'})
 
 				$('.sendsms').click(function () {
+					let pnsubc = $('.modal-pnC').val();
+					pnsubc = pnsubc.substring(0,3)+"-"+pnsubc.substring(3,7)+"-"+pnsubc.substring(7,11);
+
 					$.ajax({
 						url: "/phoneNumContain",
 						type: "post",
 						dataType : "JSON",
-						data: {"memberPn":pnc},
+						data: {"memberPn":pnsubc},
 						success: function (e){
 							if (e == true) {
 								$.ajax({

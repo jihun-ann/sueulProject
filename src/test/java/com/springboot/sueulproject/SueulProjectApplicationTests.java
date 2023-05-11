@@ -71,6 +71,8 @@ class SueulApplicationTests {
 
     @Test
     public void qwe(){
+        Detail de = detailRe.findById(50L).orElseThrow();
+        System.out.println(de);
     }
 
 

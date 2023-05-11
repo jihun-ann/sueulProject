@@ -35,7 +35,7 @@
       <hr/>
 
       <span>상품 사진</span>
-      <div class="fakeimgbox" th:style="'background : url(/Detail/'+${detail.getDid()}+'.png); background-size:contain;'" ></div>
+      <div class="fakeimgbox" th:style="'background : url(/Detail/'+${detail.getDid()}+'.png) no-repeat; background-size:100% 100%;'" ></div>
       <input type="file" name="img" class="realimgbox" accept="image/png" th:value="'/Detail/'+${detail.getDid()}+'.png'"/>
       <hr/>
 
