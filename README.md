@@ -452,6 +452,34 @@ $(window).scroll(function (){
 <br><br>
 ![image](https://github.com/jihun-ann/sueulProject/assets/118144876/652c71a9-4b42-4ad5-8010-75b72eaaaf5c)
 <br><br>
+```
+public NaverShopingMapDTO naverShopingSearch(String detailname){
+	// 네이버로그인을 구현했을때 방식은 RestTemplate을 사용하여 post하는 방법을 채택했는데,
+	// 생각했을때 로그인은 동기식으로 순차적으로 처리되어야 해당 필요한 모든 회원 정보가 필요하다 생각했고,
+	// 네이버쇼핑의 경우 중요하지 않은 정보라 생각하여 순차적으로 처리해야할 필요가 없다고 판단하였으며, resttemplate이외에 기능으로 구현하고 싶어 시도하게 되었다.
+	
+        WebClient webClient = WebClient.create();
+
+        String result = webClient.get().uri("https://openapi.naver.com/v1/search/shop.json?query="+detailname+"&display=3")
+                .header("X-Naver-Client-Id","PECAHnIiw17IlqkcNrm7")
+                .header("X-Naver-Client-Secret","MET2Ze1XgJ")
+                .retrieve().bodyToMono(String.class).block();
+
+        System.out.println(">>>>>>"+result);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        NaverShopingMapDTO shopmap;
+        try {
+            shopmap = objectMapper.readValue(result, NaverShopingMapDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return shopmap;
+    }
+```
+####상품의 이름으로 네이버 쇼핑의 검색한 결과값을 반환 받는 기능을 구현
+<br><br>
 <br><br>
 
 ## 관리자 페이지
