@@ -41,16 +41,20 @@ public class DetailServiceImpl implements DetailService{
 
     @Override
     public List<Map.Entry> todayWeather() {
+        //현재의 시간의 30분전(밀리세컨드 기준)인 1800000을 빼준 시간을 yyyyMMddHH 형식으로 저장
+        //기상청의 날씨 Update 시간이 매 시간 정각마다가 아닌 매시간의 30분마다 Update되기 때문에 30분 이전엔 해당 날씨가 조회되지 않아
+        //30분이 되기 전이라면 30분을 빼주어 이전 시간대 기준으로 날씨를 조회하고, 30분이 지났다면 현재 시간대로 날씨를 조회
         Date today = new Date();
         today.setTime(today.getTime()-1800000);
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHH");
         String todayString = df.format(today);
 
-        String todayDate = todayString.substring(0,8);
-        String todayHoure = todayString.substring(8)+"00";
+        String todayDate = todayString.substring(0,8); //"yyyyMMdd""만 사용할 수 있도록 만듦
+        String todayHoure = todayString.substring(8)+"00"; // 반환받은 시간대를 갖고 ""HHmm"을 만듦
 
         String serviceKey = "5v6gumTVFlXEMr%2BBcExFwR1pZ2rlrJgL3mzhi4IOPaKXNexoPJ4EoN214w8k2ph%2FbDN9I2uN26uxyuBzSJVAag%3D%3D";
 
+        // get방식으로 진행될 OpenAPI로 url이 될 부분들의 정보를 담아줌
         String urlString = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
                 + "?serviceKey="+serviceKey+"&numOfRows=100&pageNo=1&dataType=json"
                 + "&base_date="+todayDate+"&base_time="+todayHoure+"&nx=57&ny=127";
@@ -64,6 +68,10 @@ public class DetailServiceImpl implements DetailService{
         String result = "";
         BufferedReader bf;
         try {
+            //openStream 메서드로 해당 URL의 사이트 정보를 읽어올 수 있다.
+            //url.openStream 이외에 HttpURLConnection을 사용하는 방법도 있으나,
+            //HttpURLConnection은 요청방법이나 요청헤더, 응답코드같은 추가적인 설정이 가능하나
+            //해당 기능은 심플하게 데이터만 가져오면 되는 상황이다 보니 더욱 보기 쉽고 직관적인 openStream을 사용하였다.
             bf = new BufferedReader(new InputStreamReader(url.openStream(),"UTF-8"));
             result = bf.readLine();
         } catch (IOException e) {
@@ -78,9 +86,11 @@ public class DetailServiceImpl implements DetailService{
             throw new RuntimeException(e);
         }
 
+        //받아온 requestWeatherVO 안에 있는 items중 필요한 SKY, PTY만 List로 꺼내는 메서드
         List<WeatherVO.Item> itemLst = requestWeatherVO.getResponse().getBody().getItems().getItem().stream()
                 .filter(t -> "SKY".equals(t.getCategory()) || "PTY".equals(t.getCategory())).collect(Collectors.toList());
 
+        //타입(주종)
         int t1 = 0;
         int t2 = 0;
         int t3 = 0;
@@ -152,6 +162,7 @@ public class DetailServiceImpl implements DetailService{
         Collections.sort(mlst, new Comparator<Map.Entry>() {
             @Override
             public int compare(Map.Entry o1, Map.Entry o2) {
+                // o2.value와 o1.value를 비교하여 높은수가 왼쪽으로 올 수 있도로 정렬
                 int result = o2.getValue().toString().compareTo(o1.getValue().toString());
                 return result;
             }
@@ -161,6 +172,10 @@ public class DetailServiceImpl implements DetailService{
     }
 
     public NaverShopingMapDTO naverShopingSearch(String detailname){
+        // 네이버로그인을 구현했을때 방식은 RestTemplate을 사용하여 post하는 방법을 채택했는데,
+        // 생각했을때 로그인은 동기식으로 순차적으로 처리되어야 해당 필요한 모든 회원 정보가 필요하다 생각했고,
+        // 네이버쇼핑의 경우 중요하지 않은 정보라 생각하여 순차적으로 처리해야할 필요가 없다고 판단하였으며, resttemplate이외에 기능으로 구현하고 싶어 시도하게 되었다.
+
         WebClient webClient = WebClient.create();
 
         String result = webClient.get().uri("https://openapi.naver.com/v1/search/shop.json?query="+detailname+"&display=3")

@@ -250,7 +250,6 @@ public class SueulController {
             System.out.println("%%%%%%%%%실패%%%%");
         }
 
-
         if(memberId != null){
             Member member = memberRe.findById(memberId).orElseThrow();
             mo.addAttribute("member",member);

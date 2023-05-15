@@ -11,6 +11,7 @@
 
 <div layout:fragment="content">
   <div id="detailList-wrap">
+<!--    상품 리스트에서 어떤 종류를 선택했는지 담아 두었는데 이는 페이징처리를 위하여 사용-->
     <input type="hidden" name="kind" th:value="${kind}"/>
     <div class="kindInfo-wrap">
       <div class="detailFont kindName">
