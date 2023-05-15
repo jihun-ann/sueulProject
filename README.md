@@ -26,7 +26,11 @@ Mini_Project
 <br>
 <br>
 <br>
+
 ## 🛠️SKils and Tools
+
+<br>
+
 * BackEnd
   * Java_11
   * SpringBoot_2.7.9
@@ -68,16 +72,44 @@ Mini_Project
 ## 기능 구현
 #### 사용자 페이지
 ![image](https://github.com/jihun-ann/sueulProject/assets/118144876/1f55ad6f-aafc-40e0-8a26-f54068c195a0)
-![image](https://github.com/jihun-ann/sueulProject/assets/118144876/b63ac7b6-f079-42f2-96e4-0f34502ebc0c)
-![image](https://github.com/jihun-ann/sueulProject/assets/118144876/4373957b-1d49-47ac-8634-a3e68812a1c6)
-![image](https://github.com/jihun-ann/sueulProject/assets/118144876/1d7bbd9e-d2d5-49b6-93c6-93d33217a128)
-![image](https://github.com/jihun-ann/sueulProject/assets/118144876/33ba8827-d73c-4ba7-84e8-3841816ca68a)
-![image](https://github.com/jihun-ann/sueulProject/assets/118144876/db1b3ce8-7c35-4817-aa76-7e0c56f1b0fd)
-![image](https://github.com/jihun-ann/sueulProject/assets/118144876/71bc75f0-8027-42d7-aa6e-2e772a026c9d)
-![image](https://github.com/jihun-ann/sueulProject/assets/118144876/652c71a9-4b42-4ad5-8010-75b72eaaaf5c)
-
 <br><br>
-### 관리자 페이지
+#### 최대 10개의 추천 상품리스트를 구현하기 위하여 th:each를 사용하여 필요한 데이터를 반복적으로 뿌려
+<br><br><br><br>
+
+![image](https://github.com/jihun-ann/sueulProject/assets/118144876/7496c92c-867b-4638-b161-05935617a5fd)
+<br><br>
+![image](https://github.com/jihun-ann/sueulProject/assets/118144876/4373957b-1d49-47ac-8634-a3e68812a1c6)
+<br><br>
+
+#### JQuery를 사용하여 keyup시 입력된 값을 ajax로 넘겨 해당 아이디의 유무를 체크
+##### keydown이 아닌 up을 쓴 이유는 down시 해당 키의 입력값이 들어가기 전이기때문
+<br><br><br><br>
+#### 휴대폰 인증버튼을 눌렀을때 해당 번호가 가입되어있는지 체크 후, 가입되어 있지 않다면 인증절차가 진행되도록 구현
+
+<br><br><br><br>
+![image](https://github.com/jihun-ann/sueulProject/assets/118144876/1d7bbd9e-d2d5-49b6-93c6-93d33217a128)
+<br><br>
+![image](https://github.com/jihun-ann/sueulProject/assets/118144876/33ba8827-d73c-4ba7-84e8-3841816ca68a)
+<br><br>
+![image](https://github.com/jihun-ann/sueulProject/assets/118144876/db1b3ce8-7c35-4817-aa76-7e0c56f1b0fd)
+<br><br>
+#### pathValue를 이용하여 페이지의 들어갈 종류별로 리스트화 하도록 구현
+##### 주종을 누르면 t가 붙고, 지역을 누르면 o, 상품태그를 누르면 b, 북마크를 누르면 m가 붙게 만들어서 해당 문자의 따라 불러오는 상품의 종류들이 달라지고 이를 받는 페이지를 하나만 두어 반복적으로 사용되는 코드를 
+<br><br>
+<br><br>
+
+#### 해당 상품리스트의 스크롤 마지막에 도착하게 되면 그 다음 리스트가 append되도록 
+<br><br>
+![image](https://github.com/jihun-ann/sueulProject/assets/118144876/71bc75f0-8027-42d7-aa6e-2e772a026c9d)
+<br><br>
+![image](https://github.com/jihun-ann/sueulProject/assets/118144876/652c71a9-4b42-4ad5-8010-75b72eaaaf5c)
+<br><br>
+
+####상품의 이름으로 네이버 쇼핑의 검색한 결과값을 반환 받는 기능을 구현
+<br><br>
+<br><br>
+
+## 관리자 페이지
 ![image](https://github.com/jihun-ann/sueulProject/assets/118144876/ddc0c499-8942-42ae-8570-cc02690627a7)
 ![image](https://github.com/jihun-ann/sueulProject/assets/118144876/deee7702-d652-4fba-b1c4-5ebda8271a4d)
 ![image](https://github.com/jihun-ann/sueulProject/assets/118144876/367a94f0-205b-48a4-88bd-c359a8295281)
