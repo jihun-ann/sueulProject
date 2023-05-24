@@ -53,7 +53,7 @@ public class MemberServiceImpl implements MemberService{
         ResponseEntity<String> response = rt.postForEntity(
                 "https://nid.naver.com/oauth2.0/token", naverTokenRequest, String.class
         );
-
+        rt.getForEntity("https://nid.naver.com/oauth2.0/token", String.class);
         ObjectMapper obmapper = new ObjectMapper();
         NaverToken naverProfile;
         try {

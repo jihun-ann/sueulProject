@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface DetailRepository extends JpaRepository<Detail,Long> {
 
+
+
     @Query("select d from detail d where d.type.tid = :type order by d.did")
     public List<Detail> findByType(int type);
     @Query("select d from detail d where d.origin.oid = :origin order by d.did")

@@ -156,11 +156,11 @@
 
 									let form = document.createElement('form');
 									form.setAttribute('method', 'post');
-									form.setAttribute('action', '/memberPwUpdate');
+									form.setAttribute('action', '/memberUpdate/pw');
 
 									let pwfield = document.createElement('input');
 									pwfield.setAttribute('type', 'hidden');
-									pwfield.setAttribute('name', 'memberPw');
+									pwfield.setAttribute('name', 'newmember');
 									pwfield.setAttribute('value', newPw);
 
 									form.appendChild(pwfield);
@@ -191,11 +191,11 @@
 						} else {
 							let form = document.createElement('form');
 							form.setAttribute('method', 'post');
-							form.setAttribute('action', '/memberNnUpdate');
+							form.setAttribute('action', '/memberUpdate/nn');
 
 							let nnfield = document.createElement('input');
 							nnfield.setAttribute('type', 'hidden');
-							nnfield.setAttribute('name', 'nickname');
+							nnfield.setAttribute('name', 'newmember');
 							nnfield.setAttribute('value', newNn);
 
 							form.appendChild(nnfield);
@@ -222,11 +222,11 @@
         }else{
 					let form = document.createElement('form');
 					form.setAttribute('method', 'post');
-					form.setAttribute('action', '/memberNameUpdate');
+					form.setAttribute('action', '/memberUpdate/mn');
 
 					let namefield = document.createElement('input');
 					namefield.setAttribute('type', 'hidden');
-					namefield.setAttribute('name', 'memberName');
+					namefield.setAttribute('name', 'newmember');
 					namefield.setAttribute('value', memName);
 
 					form.appendChild(namefield);
@@ -289,11 +289,11 @@
       }else{
 				let form = document.createElement('form');
 				form.setAttribute('method', 'post');
-				form.setAttribute('action', '/memberPnUpdate');
+				form.setAttribute('action', '/memberUpdate/pn');
 
 				let pnfield = document.createElement('input');
 				pnfield.setAttribute('type', 'hidden');
-				pnfield.setAttribute('name', 'memberPhoneNum');
+				pnfield.setAttribute('name', 'newmember');
 				pnfield.setAttribute('value', memberPnContain);
 
 				form.appendChild(pnfield);

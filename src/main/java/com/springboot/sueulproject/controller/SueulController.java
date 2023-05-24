@@ -30,9 +30,10 @@ public class SueulController {
     final TagBridgeRepository tagBridgeRe;
     final BookmarkBridgeRepository bookmarkBridgeRe;
     final StarRateBridgeRepository starRateBridgeRe;
+    final QueryDSLRepository queryDSLRe;
 
     @Autowired
-    public SueulController(DetailRepository detailRe, OriginRepository originRe, TypeRepository typeRe, MemberRepository memberRe, TasteTagRepository tasteTagRe, DetailService detailService, TagBridgeRepository tagBridgeRe, BookmarkBridgeRepository bookmarkBridgeRe, StarRateBridgeRepository starRateBridgeRe) {
+    public SueulController(DetailRepository detailRe, OriginRepository originRe, TypeRepository typeRe, MemberRepository memberRe, TasteTagRepository tasteTagRe, DetailService detailService, TagBridgeRepository tagBridgeRe, BookmarkBridgeRepository bookmarkBridgeRe, StarRateBridgeRepository starRateBridgeRe, QueryDSLRepository queryDSLRe) {
         this.detailRe = detailRe;
         this.originRe = originRe;
         this.typeRe = typeRe;
@@ -42,6 +43,7 @@ public class SueulController {
         this.tagBridgeRe = tagBridgeRe;
         this.bookmarkBridgeRe = bookmarkBridgeRe;
         this.starRateBridgeRe = starRateBridgeRe;
+        this.queryDSLRe = queryDSLRe;
     }
 
     @GetMapping("/")
@@ -233,14 +235,14 @@ public class SueulController {
             mo.addAttribute("kindInfo", oinfo);
         }else if(kind.substring(0,1).equals("b")){
             Long tag = Long.parseLong(kind.substring(1));
-            dtlst = detailRe.findByTasteTag(tag);
+            dtlst = queryDSLRe.QfindByTasteTag(tag);
             TasteTag tb = tasteTagRe.tagFindByIdOne(tag);
             mo.addAttribute("detailList",dtlst);
             mo.addAttribute("kind",kind);
             mo.addAttribute("tasteTag",tb);
         }else if(kind.substring(0,1).equals("m")){
             if(memberId != null){
-            dtlst = detailRe.bookmarkFindByMemberId(memberId);
+            dtlst = queryDSLRe.QfindByBookmarkBridge(memberId);
             mo.addAttribute("detailList",dtlst);
             mo.addAttribute("kind",kind);
             }else{
@@ -267,6 +269,7 @@ public class SueulController {
 
 
         String prevUrl = request.getHeader("Referer");
+        //prevUrl = prevUrl.substring(24);
         prevUrl = prevUrl.substring(24);
 
 

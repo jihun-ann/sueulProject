@@ -2,6 +2,7 @@ package com.springboot.sueulproject.controller;
 
 import com.springboot.sueulproject.entity.Member;
 import com.springboot.sueulproject.repository.MemberRepository;
+import com.springboot.sueulproject.repository.QueryDSLRepository;
 import com.springboot.sueulproject.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,11 +20,13 @@ import java.util.Optional;
 public class MemberController {
     final MemberRepository memberRe;
     final MemberService memberService;
+    final QueryDSLRepository queryDSLRe;
 
     @Autowired
-    public MemberController(MemberRepository memberRe, MemberService memberService) {
+    public MemberController(MemberRepository memberRe, MemberService memberService, QueryDSLRepository queryDSLRe) {
         this.memberRe = memberRe;
         this.memberService = memberService;
+        this.queryDSLRe = queryDSLRe;
     }
 
     @GetMapping("/signIn")
@@ -146,12 +149,17 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/memberPwUpdate")
-    public String memberPwUpdate(@RequestParam("memberPw") String memberPw,@CookieValue(value = "memberId", required = false)String memberId,Model mo){
-        if(memberId == null || memberPw==null){
+    @PostMapping("/memberUpdate/{info}")
+    public String memberPwUpdate(
+            @PathVariable("info") String info,
+            @RequestParam("newmember") String newmember,
+            @CookieValue(value = "memberId", required = false)String memberId,
+            Model mo){
+        if(memberId == null || newmember==null){
             return "views/signIn";
         }else{
-            int result = memberRe.memberPwUpdate(memberId,memberPw);
+            //int result = memberRe.memberPwUpdate(memberId,memberPw);
+            Long result = queryDSLRe.memberUpdate(memberId,newmember,info);
             System.out.println(result);
             Member hasUser = memberRe.findById(memberId).orElseThrow();
             mo.addAttribute("member",hasUser);
@@ -159,45 +167,47 @@ public class MemberController {
         }
     }
 
-    @PostMapping("/memberNnUpdate")
-    public String memberNnUpdate(@RequestParam("nickname") String nickname,@CookieValue(value = "memberId", required = false)String memberId,Model mo){
-        System.out.println(nickname);
-        if(memberId == null || nickname ==null){
-            return "views/signIn";
-        }else{
-            int result = memberRe.memberNnUpdate(memberId,nickname);
-            System.out.println(result);
-            Member hasUser = memberRe.findById(memberId).orElseThrow();
-            mo.addAttribute("member",hasUser);
-            return "views/member/memberEdit";
-        }
-    }
-
-    @PostMapping("/memberNameUpdate")
-    public String memberNameUpdate(@RequestParam("memberName") String memberName,@CookieValue(value = "memberId", required = false)String memberId,Model mo){
-        if(memberId == null || memberName==null){
-            return "views/signIn";
-        }else{
-            int result = memberRe.memberNameUpdate(memberId,memberName);
-            System.out.println(result);
-            Member hasUser = memberRe.findById(memberId).orElseThrow();
-            mo.addAttribute("member",hasUser);
-            return "views/member/memberEdit";
-        }
-    }
-
-    @PostMapping("/memberPnUpdate")
-    public String memberPnUpdate(@RequestParam("memberPhoneNum") String memberPhoneNum,@CookieValue(value = "memberId", required = false)String memberId,Model mo){
-        if(memberId == null || memberPhoneNum==null){
-            return "views/signIn";
-        }else{
-            int result = memberRe.memberPnUpdate(memberId,memberPhoneNum);
-            System.out.println(result);
-            Member hasUser = memberRe.findById(memberId).orElseThrow();
-            mo.addAttribute("member",hasUser);
-            return "views/member/memberEdit";
-        }
-    }
+//    @PostMapping("/memberNnUpdate")
+//    public String memberNnUpdate(@RequestParam("nickname") String nickname,@CookieValue(value = "memberId", required = false)String memberId,Model mo){
+//        System.out.println(nickname);
+//        if(memberId == null || nickname ==null){
+//            return "views/signIn";
+//        }else{
+//            //int result = memberRe.memberNnUpdate(memberId,nickname);
+//            String info = "nn";
+//            Long result = queryDSLRe.memberUpdate(memberId,nickname,info);
+//            System.out.println(result);
+//            Member hasUser = memberRe.findById(memberId).orElseThrow();
+//            mo.addAttribute("member",hasUser);
+//            return "views/member/memberEdit";
+//        }
+//    }
+//
+//    @PostMapping("/memberNameUpdate")
+//    public String memberNameUpdate(@RequestParam("memberName") String memberName,@CookieValue(value = "memberId", required = false)String memberId,Model mo){
+//        if(memberId == null || memberName==null){
+//            return "views/signIn";
+//        }else{
+//            int result = memberRe.memberNameUpdate(memberId,memberName);
+//            System.out.println(result);
+//            Member hasUser = memberRe.findById(memberId).orElseThrow();
+//            mo.addAttribute("member",hasUser);
+//            return "views/member/memberEdit";
+//        }
+//    }
+//
+//    @PostMapping("/memberPnUpdate")
+//    public String memberPnUpdate(@RequestParam("memberPhoneNum") String memberPhoneNum,@CookieValue(value = "memberId", required = false)String memberId,Model mo){
+//        if(memberId == null || memberPhoneNum==null){
+//            return "views/signIn";
+//        }else{
+//            int result = memberRe.memberPnUpdate(memberId,memberPhoneNum);
+//            System.out.println(result);
+//            Member hasUser = memberRe.findById(memberId).orElseThrow();
+//            mo.addAttribute("member",hasUser);
+//            return "views/member/memberEdit";
+//        }
+//    }
 
     @GetMapping("/memberEditAdmin")
     public String adminMemberEdit(@CookieValue(value = "memberId", required = false)String memberId, Model mo){
