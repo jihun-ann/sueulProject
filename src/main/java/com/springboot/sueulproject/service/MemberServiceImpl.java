@@ -50,10 +50,7 @@ public class MemberServiceImpl implements MemberService{
 
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(body, header);
         RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.postForEntity(
-                "https://nid.naver.com/oauth2.0/token", naverTokenRequest, String.class
-        );
-        rt.getForEntity("https://nid.naver.com/oauth2.0/token", String.class);
+        ResponseEntity<String> response = rt.postForEntity("https://nid.naver.com/oauth2.0/token", naverTokenRequest, String.class);
         ObjectMapper obmapper = new ObjectMapper();
         NaverToken naverProfile;
         try {
