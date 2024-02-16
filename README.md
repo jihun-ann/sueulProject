@@ -17,7 +17,7 @@ Mini_Project
   주요 기능 : 카테고리별 상품리스트 노출, 상품 북마크 및 별점 기능, 시간과 날씨에 따라 정해 놓은 기준의 맞는 상품을 추천<br><br>
   사용기술 : <br>
   Java - 상품,원산지,종류라는 데이터, 즉 객체간 상호작용을 위하여 사용<br><br>
-  JPA - 관계형데이터, JPARepository, QueryDSL(추가예정)등을 사용하기 위하여 사용<br><br>
+  JPA - 관계형데이터, JPARepository, QueryDSL등을 사용하기 위하여 사용<br><br>
   SpringBoot - 개발하는데 있어 ConnectionPool, Bean 등등 자동으로 처리해주는 기능들이 있어 편하여 사용<br><br>
   RestAPI - NaverAPI, GetMapping, PostMapping 등등에서 사용<br><br>
   OpenAPI -
@@ -71,7 +71,7 @@ Mini_Project
 <br>
 
   ## 🔗링크
-  -	서비스 링크 : http://13.209.97.14:7890/
+  -	--서비스 링크 : http://13.209.97.14:7890/
 
 <br>
 <br>
