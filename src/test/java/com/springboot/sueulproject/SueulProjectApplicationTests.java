@@ -2,6 +2,7 @@ package com.springboot.sueulproject;
 
 import com.springboot.sueulproject.entity.*;
 import com.springboot.sueulproject.repository.*;
+import com.springboot.sueulproject.service.JasyptService;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
@@ -29,10 +30,12 @@ class SueulApplicationTests {
     final TypeRepository typeRe;
     final MemberRepository memberRe;
     final TagBridgeRepository tagBridgeRe;
+    final JasyptService jasyptService;
 
     @Autowired
-    public SueulApplicationTests(DetailRepository detailRe, OriginRepository originRe, TasteTagRepository tasteTagRe, TypeRepository typeRe, MemberRepository memberRe, TagBridgeRepository tagBridgeRe) {
+    public SueulApplicationTests(DetailRepository detailRe, OriginRepository originRe, TasteTagRepository tasteTagRe, TypeRepository typeRe, MemberRepository memberRe, TagBridgeRepository tagBridgeRe, JasyptService jasyptService) {
         this.tagBridgeRe = tagBridgeRe;
+        this.jasyptService = jasyptService;
         this.messageService = NurigoApp.INSTANCE.initialize("NCSNXTUAO5TMAGBM","547E6L3OV0H5SP0HR6LYJWOFJMP19QBD","https://api.coolsms.co.kr");
         this.detailRe = detailRe;
         this.originRe = originRe;
@@ -114,5 +117,23 @@ class SueulApplicationTests {
 
         System.out.println(de.getTbList());
         System.out.println(tt);
+    }
+
+
+    @Test
+    public void ttt(){
+        String test = jasyptService.jasyptEncrypt("123");
+        System.out.println(test);
+        String test1 = jasyptService.jasyptEncrypt("qwer");
+        System.out.println(test1);
+    }
+
+    @Test
+    public void ttt2(){
+        String test = jasyptService.jasyptDecrypt("USOSS94IChIDCD8rDiwPHZN6Y9+9bQSuaIWBqNxTM4SWZrqsm0y0fNz/Fb8pzMVe");
+        String test2 =  jasyptService.jasyptDecrypt("NSjPBfycZ0MZezKnFTI2ZYe7IME4aOnE3C5VIWQtL4OZUJBotywffpBAkQHBNrNi");
+        System.out.println(test);
+        System.out.println(test2);
+
     }
 }

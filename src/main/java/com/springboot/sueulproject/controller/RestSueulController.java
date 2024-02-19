@@ -2,6 +2,7 @@ package com.springboot.sueulproject.controller;
 
 import com.springboot.sueulproject.entity.*;
 import com.springboot.sueulproject.repository.*;
+import com.springboot.sueulproject.service.JasyptService;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
@@ -22,13 +23,15 @@ public class RestSueulController {
     final DetailRepository detailRe;
     final StarRateBridgeRepository starRateBridgeRe;
     final BookmarkBridgeRepository bookmarkBridgeRe;
+    final JasyptService jasyptService;
 
     @Autowired
-    public RestSueulController(MemberRepository memberRe, TasteTagRepository tagRe, DetailRepository detailRe, StarRateBridgeRepository starRateBridgeRe, BookmarkBridgeRepository bookmarkBridgeRe) {
+    public RestSueulController(MemberRepository memberRe, TasteTagRepository tagRe, DetailRepository detailRe, StarRateBridgeRepository starRateBridgeRe, BookmarkBridgeRepository bookmarkBridgeRe, JasyptService jasyptService) {
         this.memberRe = memberRe;
         this.detailRe = detailRe;
         this.starRateBridgeRe = starRateBridgeRe;
         this.bookmarkBridgeRe = bookmarkBridgeRe;
+        this.jasyptService = jasyptService;
         this.messageService = NurigoApp.INSTANCE.initialize("NCSNXTUAO5TMAGBM", "547E6L3OV0H5SP0HR6LYJWOFJMP19QBD", "https://api.coolsms.co.kr");
         this.tagRe = tagRe;
     }
@@ -45,9 +48,13 @@ public class RestSueulController {
 
     @RequestMapping(value = "/pwChecking", method = RequestMethod.POST)
     public boolean memberPwChecking(@CookieValue(value = "memberId", required = false) String memberId, @RequestParam("memberPw") String memberPw) {
-        Member mem = memberRe.findBymemberIdPw(memberId, memberPw);
+        Member mem = memberRe.findBymemberId(memberId);
         if (mem != null) {
-            return true;
+            if(memberPw.equals(jasyptService.jasyptDecrypt(mem.getMemberPw()))){
+                return true;
+            }else{
+                return false;
+            }
         } else {
             return false;
         }
@@ -67,7 +74,7 @@ public class RestSueulController {
         message.setTo(memberPn);
         message.setText(smsContent);
 
-        SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
+        //SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
 
         return random;
     }
@@ -81,15 +88,41 @@ public class RestSueulController {
             return true;
         }
     }
+    @RequestMapping("/ssnChecking")
+    public boolean ssnChecking(@RequestParam("ssn") String ssn,@CookieValue(value = "memberId", required = false) String memberId) {
+        Member user = memberRe.findBymemberId(memberId);
+        if (user != null) {
+            if(ssn.equals(jasyptService.jasyptDecrypt(user.getMemberSsn()))){
+                return true;
+            }else{
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     @RequestMapping("/memberContain")
     public boolean memberSsnChecking(@RequestParam("memberSsn") String memberSsn) {
-        Member mem = memberRe.findBymemberSsn(memberSsn);
+        List<Member> memLst = memberRe.findAll();
+        System.out.println(memLst.toString());
+        Member mem = memLst.stream().filter(t -> jasyptService.jasyptDecrypt(t.getMemberSsn()).equals(memberSsn)).findFirst().orElse(null);
+        //Member mem = null;
+        //memLst.stream().forEach(t -> System.out.println(t.getMemberSsn()));
         if (mem != null) {
             return false;
         } else {
             return true;
         }
+
+//        for (int i=0; i<memLst.size() ; i++) {
+//            String ssn = memLst.get(i).getMemberSsn();
+//            System.out.println(ssn);
+//            if(memberSsn.equals(jasyptService.jasyptDecrypt(ssn))){
+//                return false;
+//            }
+//        }
+//        return true;
     }
 
     @RequestMapping("/phoneNumContain")

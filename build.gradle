@@ -35,12 +35,14 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.1.0'
     implementation 'net.nurigo:sdk:4.2.7'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+    developmentOnly('org.springframework.boot:spring-boot-devtools')
 }
 
 tasks.named('test') {
@@ -73,3 +75,5 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
+
+

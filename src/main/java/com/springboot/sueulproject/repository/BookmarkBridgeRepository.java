@@ -4,6 +4,7 @@ import com.springboot.sueulproject.entity.BookmarkBridge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 public interface BookmarkBridgeRepository extends JpaRepository<BookmarkBridge,Long> {
 
     @Query("select bm from bookmark_bridge bm where bm.member.memberId = :Mid and bm.detail.did = :Did")
-    public BookmarkBridge findByMidDid(String Mid, Long Did);
+    public BookmarkBridge findByMidDid(@Param("Mid") String Mid,@Param("Did") Long Did);
 
     @Modifying
     @Transactional
     @Query("delete from bookmark_bridge bm where bm.detail.did =:did")
-    public int deleteByDidAll(Long did);
+    public int deleteByDidAll(@Param("did") Long did);
 }

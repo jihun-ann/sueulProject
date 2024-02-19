@@ -3,6 +3,7 @@ package com.springboot.sueulproject.controller;
 import com.springboot.sueulproject.entity.Member;
 import com.springboot.sueulproject.repository.MemberRepository;
 import com.springboot.sueulproject.repository.QueryDSLRepository;
+import com.springboot.sueulproject.service.JasyptService;
 import com.springboot.sueulproject.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,18 +22,20 @@ public class MemberController {
     final MemberRepository memberRe;
     final MemberService memberService;
     final QueryDSLRepository queryDSLRe;
+    final JasyptService jasyptService;
 
     @Autowired
-    public MemberController(MemberRepository memberRe, MemberService memberService, QueryDSLRepository queryDSLRe) {
+    public MemberController(MemberRepository memberRe, MemberService memberService, QueryDSLRepository queryDSLRe, JasyptService jasyptService) {
         this.memberRe = memberRe;
         this.memberService = memberService;
         this.queryDSLRe = queryDSLRe;
+        this.jasyptService = jasyptService;
     }
 
     @GetMapping("/signIn")
     public String signIn(@CookieValue(value = "memberId",required = false)String memberId, Model mo, HttpServletRequest request, HttpSession session){
         String prevUrl = request.getHeader("Referer");
-        prevUrl = prevUrl.substring(24);
+        prevUrl = prevUrl.substring(22);
         session.setAttribute("prevUrl",prevUrl);
 
         if(memberId != null){
@@ -47,7 +50,6 @@ public class MemberController {
     @PostMapping("/signIn")
     public String userSignIn(Member member, @RequestParam(value="cookieSave") String check, Model mo, HttpServletResponse response,HttpSession session) {
         String prevUrl = (String) session.getAttribute("prevUrl");
-
         Optional opUser = memberRe.findById(member.getMemberId());
         if (opUser.isEmpty()) {
             mo.addAttribute("alert", "아이디를 확인해주세요.");
@@ -55,7 +57,8 @@ public class MemberController {
             return "views/alert";
         } else {
             Member hasUser = memberRe.findById(member.getMemberId()).orElseThrow();
-            if (!hasUser.getMemberPw().equals(member.getMemberPw())) {
+            String pw = jasyptService.jasyptDecrypt(hasUser.getMemberPw());
+            if (!pw.equals(member.getMemberPw())) {
                 mo.addAttribute("alert", "비밀번호를 확인해주세요.");
                 mo.addAttribute("url", "/signIn");
                 return "views/alert";
@@ -92,7 +95,8 @@ public class MemberController {
     @PostMapping("/signUp")
     public String signUpsueul(Member member,HttpServletResponse response,Model mo,HttpSession session){
         member.setRole("member");
-
+        member.setMemberPw(jasyptService.jasyptEncrypt(member.getMemberPw()));
+        member.setMemberSsn(jasyptService.jasyptEncrypt(member.getMemberSsn()));
         memberRe.save(member);
         Cookie cookie = memberService.cookieSet(member.getMemberId(),"off");
         response.addCookie(cookie);
@@ -142,6 +146,7 @@ public class MemberController {
 
         if(memberId != null){
             Member member = memberRe.findById(memberId).orElseThrow();
+            member.setMemberSsn(jasyptService.jasyptDecrypt(member.getMemberSsn()).substring(0,6));
             mo.addAttribute("member",member);
             return "/views/member/memberEdit";
         }else{
@@ -158,6 +163,9 @@ public class MemberController {
         if(memberId == null || newmember==null){
             return "views/signIn";
         }else{
+            if("pw".equals(info)){
+                newmember = jasyptService.jasyptDecrypt(newmember);
+            }
             //int result = memberRe.memberPwUpdate(memberId,memberPw);
             Long result = queryDSLRe.memberUpdate(memberId,newmember,info);
             System.out.println(result);

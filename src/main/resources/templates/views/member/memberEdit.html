@@ -114,6 +114,7 @@
 			$('.memberNnEditWrap').css({'display': "inline"});
 		}else if (e.currentTarget.parentElement.id == "memberNamewrap") {
 			$('.memberNameEditWrap').css({'display': "inline"});
+      $('.memberName').val(`[[${member.memberName}]]`);
 			$('.memberSsn1').val('[[${#strings.substring(member.memberSsn,0,6)}]]');
 		}else if (e.currentTarget.parentElement.id == "memberPnwrap") {
 			$('.memberPnEditWrap').css({'display': "inline"});
@@ -216,28 +217,35 @@
 			if(memName==""||memSsn1==""||memSsn2==""){
 				alert('이름과 주민등록번호를 입력해주세요.')
       }else{
-        let checkSsn = "[[${member.memberSsn}]]";
-				if(memSsn != checkSsn){
-          alert("주민등록번호를 확인해주세요.")
-        }else{
-					let form = document.createElement('form');
-					form.setAttribute('method', 'post');
-					form.setAttribute('action', '/memberUpdate/mn');
+        $.ajax({
+          url     : "/ssnChceking",
+          type    : "post",
+          data    : {"ssn": memSsn},
+          dataType: "JSON",
+          success : function (e) {
+            if (e == true){
+              let form = document.createElement('form');
+              form.setAttribute('method', 'post');
+              form.setAttribute('action', '/memberUpdate/mn');
 
-					let namefield = document.createElement('input');
-					namefield.setAttribute('type', 'hidden');
-					namefield.setAttribute('name', 'newmember');
-					namefield.setAttribute('value', memName);
+              let namefield = document.createElement('input');
+              namefield.setAttribute('type', 'hidden');
+              namefield.setAttribute('name', 'newmember');
+              namefield.setAttribute('value', memName);
 
-					form.appendChild(namefield);
-					document.body.appendChild(form);
-					form.submit();
-        }
+              form.appendChild(namefield);
+              document.body.appendChild(form);
+              form.submit();
+            }else{
+              alert("주민등록번호를 확인해주세요.");
+            }
+          }
+        })
       }
     })
 
-    $('.authNumReqBtn').click(function (){
 		let memberPnContain;
+    $('.authNumReqBtn').click(function (){
       let newPn1 = $('.memberPn1').val();
       let newPn2 = $('.memberPn2').val();
       let newPn3 = $('.memberPn3').val();
@@ -264,7 +272,7 @@
 									console.log(e);
 								}
 							})
-              $('.newPn').prop('readonly',true);
+              //$('.newPn').prop('readonly',true);
 							$('.authNumReqBtn').val("재인증받기");
 						} else {
 							alert("이미 가입된 번호입니다.");

@@ -270,7 +270,7 @@ public class SueulController {
 
         String prevUrl = request.getHeader("Referer");
         //prevUrl = prevUrl.substring(24);
-        prevUrl = prevUrl.substring(24);
+        prevUrl = prevUrl.substring(22);
 
 
         Optional optional = detailRe.findById(did);
